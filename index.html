@@ -1,0 +1,2495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>decor8 Mood Board</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        html { font-family: 'Inter', sans-serif; }
+        
+        :root {
+            /* General Theme Variables */
+            --page-bg: #f8f8f8;
+            --header-text-color: #333333;
+            --separator-color: #e0e0e0;
+            --controls-bg: #ffffff;
+            --button-bg: transparent;
+            --button-text-color: #555555;
+            --button-border-color: transparent;
+            --button-hover-bg: #f0f0f0;
+            --button-hover-border-color: #f0f0f0;
+            --button-active-bg: #EADADB;
+            --button-active-text: #333333;
+            --button-active-border: #DDC4C4;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100dvh;
+            background-color: var(--page-bg);
+            transition: background-color 0.3s ease-in-out;
+        }
+        
+        .controls-header {
+            padding: 8px 16px;
+            flex-shrink: 0;
+            background-color: var(--controls-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 1000;
+            transition: background-color 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .header-row {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-title-group .logo-img {
+            height: 32px;
+            width: auto;
+        }
+
+        .app-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.75rem;
+            color: var(--header-text-color);
+            font-weight: 700;
+        }
+
+        .tool-group {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        @media (min-width: 640px) { .tool-group { gap: 8px; } }
+
+        .tool-group-separator {
+            border-left: 1px solid var(--separator-color);
+            height: 24px;
+            margin: 0 4px;
+        }
+        
+        .control-button, .tool-button {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem; 
+            transition: all 0.15s ease-in-out;
+            border: 1px solid var(--button-border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: var(--button-text-color);
+            background-color: var(--button-bg);
+        }
+        
+        .control-button svg, .tool-button svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            stroke-width: 2;
+            color: var(--button-text-color);
+        }
+        
+        .control-button i, .tool-button i {
+            font-size: 1.1rem;
+            width: 1.25rem;
+            text-align: center;
+            color: var(--button-text-color);
+        }
+
+        .control-button:hover, .tool-button:hover {
+            background-color: var(--button-hover-bg);
+            border-color: var(--button-hover-border-color);
+        }
+        .control-button.disabled, .tool-button.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background-color: var(--button-bg) !important;
+            color: #999 !important;
+            box-shadow: none;
+            transform: none;
+        }
+        
+        .control-button.disabled svg, .tool-button.disabled svg, .control-button.disabled i, .tool-button.disabled i {
+            color: #999 !important;
+        }
+
+        .control-button.active-mode {
+             background-color: var(--button-active-bg) !important; 
+             color: var(--button-active-text) !important; 
+             border-color: var(--button-active-border) !important;
+        }
+        
+        .control-button.active-mode svg, .tool-button.active-mode svg, .control-button.active-mode i, .tool-button.active-mode i {
+             color: var(--button-active-text) !important;
+        }
+        
+        #deleteItemBtn:not(.disabled):hover { background-color: #FEE2E2 !important; border-color: #FEE2E2 !important; color: #B91C1C !important; }
+        #clearCanvasBtn:hover { background-color: #FEE2E2 !important; border-color: #FEE2E2 !important; color: #B91C1C !important; }
+        
+        #themeSelector { position: relative; }
+        #themeDropdown {
+            display: none; position: absolute; top: 100%; right: 0;
+            background-color: white; border-radius: 0.375rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 1010;
+            padding: 0.5rem; min-width: 150px;
+        }
+        .theme-option {
+            display: block; width: 100%; text-align: left;
+            padding: 0.5rem 0.75rem; font-weight: 500;
+            border-radius: 0.25rem; cursor: pointer;
+            background: none; border: none;
+        }
+        .theme-option:hover { background-color: #f0f2f5; }
+        .theme-option.active { background-color: #e0e7ff; color: #3730a3; }
+
+        #bgColorPicker {
+             width: 38px; height: 38px; border: 1px solid #D1D5DB;
+             cursor: pointer; border-radius: 0.375rem; padding: 2px;
+        }
+        #bgColorPickerLabel {
+             font-size: 0.875rem;
+             margin-right: 0.25rem;
+        }
+
+        #canvas-wrapper {
+            flex-grow: 1; min-height: 0; overflow: hidden;
+            padding: 10px; background-color: transparent;
+            display: flex;
+        }
+
+        canvas#moodboardCanvas {
+            display: block; width: 100%; height: 100%;
+            cursor: grab; touch-action: none;
+            background-color: #ffffff; border-radius: 0.375rem;
+            outline: none;
+        }
+        
+        #cropCanvasWrapper canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: white; padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1002;
+            display: none; max-width: 90vw; width: 450px; max-height: 90vh; overflow-y: auto;
+        }
+        #startupModal { z-index: 1007; }
+        #helpModal { 
+            width: 550px; z-index: 1003; display: none; 
+            flex-direction: column; max-height: 85vh;
+        }
+        #helpContent { overflow-y: auto; padding-right: 10px; }
+        #confirmClearModal, #confirmDeleteSessionModal { z-index: 1008; }
+
+        #annotationModal textarea, #textNodeModal textarea {
+            width: calc(100% - 16px); border: 1px solid #ccc; padding: 8px; min-height: 80px;
+            margin-top: 5px; margin-bottom: 10px; border-radius: 4px;
+        }
+        #annotationModal label, #textNodeModal label { display: block; margin-top: 8px; font-size: 0.875rem; color: #374151; }
+        .modal button, .modal input[type="color"], .modal input[type="number"], .modal select {
+            margin-top: 5px; padding: 8px 12px; border-radius: 0.25rem; font-weight: 600; transition: background-color 0.15s ease-in-out;
+        }
+        .modal input[type="number"], .modal select { width: calc(100% - 16px); border: 1px solid #ccc; }
+        .modal input[type="color"] { width: calc(100% - 16px); height: 38px; }
+
+        #exportedImage { max-width: 100%; max-height: 60vh; border: 1px solid #ccc; margin-top: 10px; margin-bottom: 10px; }
+
+        /* Utility classes */
+        .loading-spinner {
+            border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%;
+            width: 30px; height: 30px; animation: spin 1s linear infinite;
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 1010; display: none;
+        }
+        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        #messageBox {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background-color: #333; color: white; padding: 10px 20px;
+            border-radius: 5px; z-index: 1009; opacity: 0;
+            transition: opacity 0.5s ease-in-out; display: none;
+        }
+        #messageBox.show { display: block; opacity: 1; }
+        .hidden-input { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="controls-header">
+        <div class="header-row">
+            <div class="logo-title-group">
+                <img src="https://images.squarespace-cdn.com/content/v1/58b56e5cd2b857960a275c83/1539697115255-HPNZK26V6Q6PGBNWO8GS/static1.squarespace-cdn.png" alt="decor8 Logo" class="logo-img">
+                <span class="app-title">Mood Board</span>
+            </div>
+            <div class="tool-group">
+                <button id="saveSessionBtn" title="Save work to this browser" class="tool-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> <span class="hidden lg:inline">Session</span></button>
+                <button id="loadSessionBtn" title="Load work from this browser" class="tool-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path></svg></button>
+                <div class="tool-group-separator"></div>
+                <button id="saveToDeviceBtn" title="Download board as a file" class="tool-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> <span class="hidden lg:inline">File</span></button>
+                <input type="file" id="loadFromDeviceInput" accept=".json" class="hidden-input">
+                <button id="loadFromDeviceBtn" title="Load board from a file" class="tool-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg></button>
+                <div class="tool-group-separator"></div>
+                <button id="exportPngBtn" title="Export as PNG" class="tool-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> <span class="hidden lg:inline">Export</span></button>
+                <button id="clearCanvasBtn" title="Clear Canvas" class="tool-button"><i class="fa-solid fa-broom fa-fw"></i></button>
+            </div>
+        </div>
+        <div class="header-row justify-start">
+            <div class="tool-group">
+                <input type="file" id="uploadInput" accept="image/*" multiple class="hidden-input">
+                <button id="addImageBtn" title="Add Image (I)" class="control-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> <span class="hidden md:inline">Image</span></button>
+                <button id="addTextNodeBtn" title="Add Text Snippet (T)" class="control-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg> <span class="hidden md:inline">Text</span></button>
+                <div class="tool-group-separator"></div>
+                <button id="styleOrAnnotateBtn" title="Annotate / Style Item (A)" class="control-button disabled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg></button>
+                <button id="cropImageBtn" title="Crop Image" class="control-button disabled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.13 1L6 16a2 2 0 0 0 2 2h15"></path><path d="M1 6.13L16 6a2 2 0 0 1 2 2v15"></path></svg></button>
+                <button id="deleteItemBtn" title="Delete Selected Item (Del/Backspace)" class="control-button disabled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button>
+                <div class="tool-group-separator"></div>
+                <button id="bringToFrontBtn" title="Bring to Front" class="control-button disabled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2" ry="2"></rect><path d="M16 3H5a2 2 0 0 0-2 2v11"></path></svg></button>
+                <button id="sendToBackBtn" title="Send to Back" class="control-button disabled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="13" height="13" rx="2" ry="2"></rect><path d="M21 8v11a2 2 0 0 1-2 2H8"></path></svg></button>
+                <div class="tool-group-separator"></div>
+                <button id="undoBtn" title="Undo (Ctrl+Z)" class="tool-button disabled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"></path><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"></path></svg></button>
+                <button id="redoBtn" title="Redo (Ctrl+Y)" class="tool-button disabled"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3l-3 2.7"></path></svg></button>
+                <div class="tool-group-separator"></div>
+                <button id="zoomOutBtn" title="Zoom Out (-)" class="control-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg></button>
+                <button id="resetZoomPanBtn" title="Reset View (0)" class="control-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path></svg></button>
+                <button id="zoomInBtn" title="Zoom In (+)" class="control-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg></button>
+                <div class="tool-group-separator"></div>
+                <label id="bgColorPickerLabel" for="bgColorPicker" class="hidden sm:inline-block text-sm mr-1">BG:</label>
+                <input type="color" id="bgColorPicker" title="Canvas Background Color" value="#ffffff">
+                <div id="themeSelector">
+                   <button id="themeBtn" title="Change Theme" class="tool-button"><i class="fa-solid fa-brush fa-fw"></i></button>
+                   <div id="themeDropdown"></div>
+                </div>
+                <button id="helpBtn" title="Quick Help" class="tool-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="canvas-wrapper">
+        <canvas id="moodboardCanvas" tabindex="0"></canvas>
+    </div>
+
+    <!-- START: Modals -->
+    <div id="startupModal" class="modal">
+        <h3 class="text-xl font-semibold mb-3">Welcome Back!</h3>
+        <p class="text-gray-600 mb-4">
+            An existing session was found saved in this browser.
+        </p>
+        <p class="text-gray-600 mb-4">
+            Would you like to restore it, or start fresh with a blank canvas?
+        </p>
+        <div class="mt-6 flex flex-col sm:flex-row justify-end gap-2">
+            <button id="startFreshBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Start Fresh</button>
+            <button id="restoreSessionBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Restore Session</button>
+        </div>
+    </div>
+    
+    <div id="cropModal" class="modal" style="width: 80vw; max-width: 800px;">
+        <h3 class="text-xl font-semibold mb-3">Crop Image</h3>
+        <div id="cropCanvasWrapper" style="position: relative; width: 100%; height: 50vh; background-color: #e0e0e0; margin-bottom: 1rem; cursor: crosshair;">
+            <canvas id="cropCanvas"></canvas>
+        </div>
+        <div class="mt-4 flex justify-end gap-2">
+            <button id="cancelCropBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">Cancel</button>
+            <button id="confirmCropBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Apply Crop</button>
+        </div>
+    </div>
+
+    <div id="annotationModal" class="modal">
+        <h3 id="annotationModalTitle" class="text-lg font-semibold mb-2">Annotate / Style Item</h3>
+        <label for="annotationText">Annotation:</label>
+        <textarea id="annotationText" placeholder="Your annotation here..."></textarea>
+        <label for="annotationColorInput">Text Color:</label>
+        <input type="color" id="annotationColorInput" value="#000000">
+        <label for="annotationFontSizeInput">Font Size:</label>
+        <input type="number" id="annotationFontSizeInput" value="12" min="8" max="48">
+        <label for="annotationFontFamilyInput">Font:</label>
+        <select id="annotationFontFamilyInput">
+            <option value="'Inter', sans-serif">Inter</option>
+            <option value="'Dancing Script', cursive">Dancing Script</option>
+            <option value="'Playfair Display', serif">Playfair Display</option>
+            <option value="'Montserrat', sans-serif">Montserrat</option>
+            <option value="'Lora', serif">Lora</option>
+            <option value="'Arial', sans-serif">Arial</option>
+            <option value="'Verdana', sans-serif">Verdana</option>
+            <option value="'Georgia', serif">Georgia</option>
+            <option value="'Times New Roman', serif">Times New Roman</option>
+            <option value="'Courier New', monospace">Courier New</option>
+        </select>
+        <div id="imageSpecificControls">
+            <label for="annotationPositionInput">Text Position (for Image):</label>
+            <select id="annotationPositionInput">
+                <option value="bottom">Bottom</option>
+                <option value="top">Top</option>
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+            </select>
+            <hr class="my-3">
+            <h4 class="text-md font-semibold mb-1">Image Border</h4>
+            <label for="imageBorderColorInput">Border Color:</label>
+            <input type="color" id="imageBorderColorInput" value="#000000">
+            <label for="imageBorderWidthInput">Border Width (px):</label>
+            <input type="number" id="imageBorderWidthInput" value="0" min="0" max="20">
+        </div>
+        <div class="mt-4 flex justify-end gap-2">
+            <button id="submitAnnotationBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Apply Changes</button>
+            <button id="cancelAnnotationBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">Cancel</button>
+        </div>
+    </div>
+
+    <div id="textNodeModal" class="modal">
+        <h3 id="textNodeModalTitle" class="text-lg font-semibold mb-2">Add Text Snippet</h3>
+        <label for="textNodeContent">Text:</label>
+        <textarea id="textNodeContent" placeholder="Your text snippet..."></textarea>
+        <label for="textNodeColorInput">Text Color:</label>
+        <input type="color" id="textNodeColorInput" value="#000000">
+        <label for="textNodeFontSizeInput">Font Size (px):</label>
+        <input type="number" id="textNodeFontSizeInput" value="16" min="8" max="72">
+        <label for="textNodeFontFamilyInput">Font:</label>
+        <select id="textNodeFontFamilyInput">
+            <option value="'Inter', sans-serif">Inter</option>
+            <option value="'Dancing Script', cursive">Dancing Script</option>
+            <option value="'Playfair Display', serif">Playfair Display</option>
+            <option value="'Montserrat', sans-serif">Montserrat</option>
+            <option value="'Lora', serif">Lora</option>
+            <option value="'Arial', sans-serif">Arial</option>
+            <option value="'Verdana', sans-serif">Verdana</option>
+            <option value="'Georgia', serif">Georgia</option>
+            <option value="'Times New Roman', serif">Times New Roman</option>
+            <option value="'Courier New', monospace">Courier New</option>
+        </select>
+        <label for="textNodeBgColorInput">Background Color:</label>
+        <input type="color" id="textNodeBgColorInput" value="#FFFFFF">
+        <label for="textNodeDefaultWidthInput">Width (px):</label>
+        <input type="number" id="textNodeDefaultWidthInput" value="200" min="50" max="1000">
+        <div class="mt-4 flex justify-end gap-2">
+            <button id="submitTextNodeBtn" class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded">Add Snippet</button>
+            <button id="cancelTextNodeBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">Cancel</button>
+        </div>
+    </div>
+
+    <div id="exportPngModal" class="modal">
+        <h3 class="text-lg font-semibold">Exported Image</h3>
+        <p class="text-sm text-gray-600 my-2">Right-click (or long-press on mobile) the image below and select "Save Image As..." to download.</p>
+        <img id="exportedImage" src="#" alt="Exported Mood Board">
+        <button id="closeExportModalBtn" class="bg-red-500 hover:bg-red-600 text-white w-full mt-2 py-2 rounded">Close</button>
+    </div>
+
+    <div id="helpModal" class="modal">
+        <h3 class="text-xl font-semibold mb-3">decor8 Mood Board: Quick Help</h3>
+        <div id="helpContent" class="text-sm leading-relaxed"></div>
+        <div class="mt-4 flex justify-end">
+            <button id="closeHelpModalBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">OK</button>
+        </div>
+    </div>
+
+    <div id="confirmClearModal" class="modal">
+        <h3 class="text-lg font-semibold mb-2">Confirm Clear Canvas</h3>
+        <p class="text-sm text-gray-600 my-3">Are you sure you want to clear the entire canvas? This action can be undone using the Undo button (Ctrl+Z) if changes were made after loading or initialising.</p>
+        <div class="mt-4 flex justify-end gap-2">
+            <button id="confirmClearCancelBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">Cancel</button>
+            <button id="confirmClearOkBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Clear Canvas</button>
+        </div>
+    </div>
+
+     <div id="confirmDeleteSessionModal" class="modal">
+        <h3 class="text-lg font-semibold mb-2">Confirm Start Fresh</h3>
+        <p class="text-sm text-gray-600 my-3">Are you sure? This will delete your previously saved session from this browser and start a new, blank canvas. This action cannot be undone.</p>
+        <div class="mt-4 flex justify-end gap-2">
+            <button id="confirmDeleteSessionCancelBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">Cancel</button>
+            <button id="confirmDeleteSessionOkBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Yes, Start Fresh</button>
+        </div>
+    </div>
+    <!-- END: Modals -->
+
+    <div id="loadingSpinner" class="loading-spinner"></div>
+    <div id="messageBox"></div>
+
+    <script>
+        // --- Constants ---
+        const MIN_SCALE = 0.1;
+        const MAX_SCALE = 5;
+        const ZOOM_SENSITIVITY = 0.001;
+        const RESIZE_HANDLE_SIZE = 10;
+        const MIN_ITEM_SIZE = RESIZE_HANDLE_SIZE * 1.5;
+        const EPSILON = 1e-5;
+        const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+        const MAX_HISTORY_STATES = 50;
+        const DOUBLE_TAP_THRESHOLD = 400; // ms
+        const DEFAULT_TEXT_NODE_WIDTH = 200;
+        const DEFAULT_IMAGE_WIDTH = 150;
+        const NUDGE_AMOUNT = 10;
+        const MODAL_DISPLAY_FLEX = 'flex';
+        const MODAL_DISPLAY_BLOCK = 'block';
+
+        // --- Themes ---
+        const THEMES = {
+            'decor8 Signature': {
+                '--page-bg': '#f8f8f8',
+                '--header-text-color': '#333333',
+                '--separator-color': '#e0e0e0',
+                '--controls-bg': '#ffffff',
+                '--button-bg': 'transparent',
+                '--button-text-color': '#555555',
+                '--button-border-color': 'transparent',
+                '--button-hover-bg': '#f0f0f0',
+                '--button-hover-border-color': '#f0f0f0',
+                '--button-active-bg': '#EADADB',
+                '--button-active-text': '#333333',
+                '--button-active-border': '#DDC4C4',
+            },
+            'Warm Neutral': {
+                '--page-bg': '#F5F1ED',
+                '--header-text-color': '#5C544D',
+                '--separator-color': '#E5DED6',
+                '--controls-bg': '#FFFFFF',
+                '--button-bg': 'transparent',
+                '--button-text-color': '#5C544D',
+                '--button-border-color': 'transparent',
+                '--button-hover-bg': '#EFEAE4',
+                '--button-hover-border-color': '#EFEAE4',
+                '--button-active-bg': '#BCA89F',
+                '--button-active-text': '#FFFFFF',
+                '--button-active-border': '#AD968D',
+            },
+            'Chic & Modern': {
+                '--page-bg': '#EAEAEA',
+                '--header-text-color': '#111111',
+                '--separator-color': '#D0D0D0',
+                '--controls-bg': '#FAFAFA',
+                '--button-bg': 'transparent',
+                '--button-text-color': '#111111',
+                '--button-border-color': 'transparent',
+                '--button-hover-bg': '#E0E0E0',
+                '--button-hover-border-color': '#E0E0E0',
+                '--button-active-bg': '#A9C4D4',
+                '--button-active-text': '#111111',
+                '--button-active-border': '#9AB5C5',
+            },
+            'Blush & Sage': {
+                '--page-bg': '#FDF6F6',
+                '--header-text-color': '#5A6E65',
+                '--separator-color': '#E8DCD8',
+                '--controls-bg': '#FFFFFF',
+                '--button-bg': 'transparent',
+                '--button-text-color': '#5A6E65',
+                '--button-border-color': 'transparent',
+                '--button-hover-bg': '#F1E9E9',
+                '--button-hover-border-color': '#F1E9E9',
+                '--button-active-bg': '#A9C4B8',
+                '--button-active-text': '#FFFFFF',
+                '--button-active-border': '#9AB5A8',
+            },
+            'Scandinavian Blue': {
+                '--page-bg': '#F4F7F9',
+                '--header-text-color': '#3D5A80',
+                '--separator-color': '#DDE3E8',
+                '--controls-bg': '#FFFFFF',
+                '--button-bg': 'transparent',
+                '--button-text-color': '#3D5A80',
+                '--button-border-color': 'transparent',
+                '--button-hover-bg': '#E9EFF3',
+                '--button-hover-border-color': '#E9EFF3',
+                '--button-active-bg': '#98C1D9',
+                '--button-active-text': '#293241',
+                '--button-active-border': '#87B2CC',
+            },
+            'Earthy Terracotta': {
+                '--page-bg': '#FCF9F5',
+                '--header-text-color': '#BF5A36',
+                '--separator-color': '#EAE1D7',
+                '--controls-bg': '#FFFFFF',
+                '--button-bg': 'transparent',
+                '--button-text-color': '#BF5A36',
+                '--button-border-color': 'transparent',
+                '--button-hover-bg': '#F6ECE2',
+                '--button-hover-border-color': '#F6ECE2',
+                '--button-active-bg': '#D98C6B',
+                '--button-active-text': '#FFFFFF',
+                '--button-active-border': '#C97B5A',
+            },
+        };
+
+        // --- Canvas Setup ---
+        const canvas = document.getElementById('moodboardCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // --- IndexedDB Helper ---
+        const idbHelper = {
+            db: null,
+            DB_NAME: 'decor8MoodboardDB',
+            STORE_NAME: 'sessions',
+            openDB: function() {
+                return new Promise((resolve, reject) => {
+                    if (this.db) {
+                        resolve(this.db);
+                        return;
+                    }
+                    const request = indexedDB.open(this.DB_NAME, 1);
+                    request.onerror = (event) => reject("IndexedDB error: " + request.error?.message);
+                    request.onsuccess = (event) => {
+                        this.db = event.target.result;
+                        resolve(this.db);
+                    };
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains(this.STORE_NAME)) {
+                            db.createObjectStore(this.STORE_NAME, { keyPath: 'id' });
+                        }
+                    };
+                });
+            },
+            saveSession: async function(sessionData) {
+                const db = await this.openDB();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction([this.STORE_NAME], 'readwrite');
+                    const store = transaction.objectStore(this.STORE_NAME);
+                    const request = store.put({ id: 'currentSession', data: sessionData });
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject("Failed to save session: " + request.error?.message);
+                });
+            },
+            loadSession: async function() {
+                const db = await this.openDB();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction([this.STORE_NAME], 'readonly');
+                    const store = transaction.objectStore(this.STORE_NAME);
+                    const request = store.get('currentSession');
+                    request.onsuccess = () => resolve(request.result ? request.result.data : null);
+                    request.onerror = () => reject("Failed to load session: " + request.error?.message);
+                });
+            },
+            deleteSession: async function() {
+                const db = await this.openDB();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction([this.STORE_NAME], 'readwrite');
+                    const store = transaction.objectStore(this.STORE_NAME);
+                    const request = store.delete('currentSession');
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject("Failed to delete session: " + request.error?.message);
+                });
+            }
+        };
+
+        // --- DOM Elements (Cached) ---
+        const saveSessionBtn = document.getElementById('saveSessionBtn');
+        const loadSessionBtn = document.getElementById('loadSessionBtn');
+        const uploadInput = document.getElementById('uploadInput');
+        const loadFromDeviceInput = document.getElementById('loadFromDeviceInput');
+        const addImageBtn = document.getElementById('addImageBtn');
+        const styleOrAnnotateBtn = document.getElementById('styleOrAnnotateBtn');
+        const cropImageBtn = document.getElementById('cropImageBtn');
+        const zoomInBtn = document.getElementById('zoomInBtn'); 
+        const zoomOutBtn = document.getElementById('zoomOutBtn'); 
+        const resetZoomPanBtn = document.getElementById('resetZoomPanBtn');
+        const bgColorPicker = document.getElementById('bgColorPicker'); 
+        const bringToFrontBtn = document.getElementById('bringToFrontBtn'); 
+        const sendToBackBtn = document.getElementById('sendToBackBtn'); 
+        const deleteItemBtn = document.getElementById('deleteItemBtn'); 
+        const undoBtn = document.getElementById('undoBtn'); 
+        const redoBtn = document.getElementById('redoBtn'); 
+        const saveToDeviceBtn = document.getElementById('saveToDeviceBtn');
+        const loadFromDeviceBtn = document.getElementById('loadFromDeviceBtn');
+        const exportPngBtn = document.getElementById('exportPngBtn'); 
+        const clearCanvasBtn = document.getElementById('clearCanvasBtn'); 
+        const annotationModal = document.getElementById('annotationModal'); 
+        const annotationModalTitle = document.getElementById('annotationModalTitle'); 
+        const annotationText = document.getElementById('annotationText'); 
+        const annotationColorInput = document.getElementById('annotationColorInput'); 
+        const annotationFontSizeInput = document.getElementById('annotationFontSizeInput'); 
+        const annotationFontFamilyInput = document.getElementById('annotationFontFamilyInput'); 
+        const imageSpecificControls = document.getElementById('imageSpecificControls');
+        const annotationPositionInput = document.getElementById('annotationPositionInput'); 
+        const imageBorderColorInput = document.getElementById('imageBorderColorInput'); 
+        const imageBorderWidthInput = document.getElementById('imageBorderWidthInput'); 
+        const submitAnnotationBtn = document.getElementById('submitAnnotationBtn'); 
+        const cancelAnnotationBtn = document.getElementById('cancelAnnotationBtn'); 
+        const exportPngModal = document.getElementById('exportPngModal');
+        const exportedImage = document.getElementById('exportedImage');
+        const closeExportModalBtn = document.getElementById('closeExportModalBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const messageBox = document.getElementById('messageBox');
+        const helpBtn = document.getElementById('helpBtn'); 
+        const helpModal = document.getElementById('helpModal'); 
+        const helpContent = document.getElementById('helpContent'); 
+        const closeHelpModalBtn = document.getElementById('closeHelpModalBtn'); 
+        const confirmClearModal = document.getElementById('confirmClearModal');
+        const confirmClearOkBtn = document.getElementById('confirmClearOkBtn');
+        const confirmClearCancelBtn = document.getElementById('confirmClearCancelBtn');
+        const addTextNodeBtn = document.getElementById('addTextNodeBtn');
+        const textNodeModal = document.getElementById('textNodeModal');
+        const textNodeModalTitle = document.getElementById('textNodeModalTitle');
+        const textNodeContent = document.getElementById('textNodeContent');
+        const textNodeColorInput = document.getElementById('textNodeColorInput');
+        const textNodeFontSizeInput = document.getElementById('textNodeFontSizeInput');
+        const textNodeFontFamilyInput = document.getElementById('textNodeFontFamilyInput'); 
+        const textNodeBgColorInput = document.getElementById('textNodeBgColorInput');
+        const textNodeDefaultWidthInput = document.getElementById('textNodeDefaultWidthInput');
+        const submitTextNodeBtn = document.getElementById('submitTextNodeBtn');
+        const cancelTextNodeBtn = document.getElementById('cancelTextNodeBtn');
+        const themeBtn = document.getElementById('themeBtn');
+        const themeDropdown = document.getElementById('themeDropdown');
+        const cropModal = document.getElementById('cropModal');
+        const cropCanvas = document.getElementById('cropCanvas');
+        const cropCanvasWrapper = document.getElementById('cropCanvasWrapper');
+        const cancelCropBtn = document.getElementById('cancelCropBtn');
+        const confirmCropBtn = document.getElementById('confirmCropBtn');
+        const startupModal = document.getElementById('startupModal');
+        const restoreSessionBtn = document.getElementById('restoreSessionBtn');
+        const startFreshBtn = document.getElementById('startFreshBtn');
+        const confirmDeleteSessionModal = document.getElementById('confirmDeleteSessionModal');
+        const confirmDeleteSessionOkBtn = document.getElementById('confirmDeleteSessionOkBtn');
+        const confirmDeleteSessionCancelBtn = document.getElementById('confirmDeleteSessionCancelBtn');
+
+        // --- State Variables ---
+        let items = []; 
+        let selectedItem = null;
+        let isDragging = false;
+        let isPanning = false;
+        let isResizing = false; 
+        let resizeCorner = null; 
+        let dragStartCoords = { x: 0, y: 0 };
+        let itemInitialDimensions = { width: 0, height: 0, x: 0, y: 0 };
+        let lastPanCoords = { x: 0, y: 0 };
+        let scale = 1;
+        let translateX = 0;
+        let translateY = 0;
+        let history = [];
+        let redoStack = [];
+        let touchStartCoords = { x: 0, y: 0 };
+        let initialPinchDistance = null;
+        let canvasBackgroundColor = '#ffffff'; 
+        let lastTapTime = 0;
+        let lastTapItemId = null;
+        let editingTextNode = null; 
+        let currentTheme = 'decor8 Signature';
+        let isCroppingMode = false;
+        let croppingItem = null;
+        let cropRect = { startX: 0, startY: 0, w: 0, h: 0 };
+        let isDrawingCropRect = false;
+        let cropCanvasScale = 1;
+        
+        // --- Initialization ---
+        function init() {
+            // Read theme from localStorage on startup
+            try {
+                const savedTheme = localStorage.getItem('decor8MoodboardTheme');
+                if (savedTheme && THEMES[savedTheme]) {
+                    currentTheme = savedTheme;
+                }
+            } catch (e) {
+                console.warn("Could not retrieve theme from localStorage:", e);
+            }
+            
+            // Event Listeners
+            saveSessionBtn.addEventListener('click', handleSaveSession);
+            loadSessionBtn.addEventListener('click', () => handleLoadSession(false)); // false because it's a manual user trigger
+            addImageBtn.addEventListener('click', () => triggerUpload('image/*'));
+            uploadInput.addEventListener('change', handleFileUpload);
+            loadFromDeviceBtn.addEventListener('click', () => loadFromDeviceInput.click());
+            loadFromDeviceInput.addEventListener('change', loadBoardFromJson); 
+            saveToDeviceBtn.addEventListener('click', saveBoardAsJson); 
+            styleOrAnnotateBtn.addEventListener('click', openAnnotationModal);
+            cropImageBtn.addEventListener('click', openCropModal);
+            cancelCropBtn.addEventListener('click', closeCropModal);
+            confirmCropBtn.addEventListener('click', handleCropConfirm);
+            cropCanvas.addEventListener('mousedown', handleCropMouseDown);
+            cropCanvas.addEventListener('mousemove', handleCropMouseMove);
+            cropCanvas.addEventListener('mouseup', handleCropMouseUp);
+			cropCanvas.addEventListener('touchstart', handleCropTouchStart, { passive: false });
+			cropCanvas.addEventListener('touchmove', handleCropTouchMove, { passive: false });
+			cropCanvas.addEventListener('touchend', handleCropTouchEnd);
+            deleteItemBtn.addEventListener('click', deleteSelectedItem); 
+            bgColorPicker.addEventListener('input', handleBgColorChange); 
+            undoBtn.addEventListener('click', undo);
+            redoBtn.addEventListener('click', redo);
+            zoomInBtn.addEventListener('click', () => { zoomCanvas(1.2); saveState(); });
+            zoomOutBtn.addEventListener('click', () => { zoomCanvas(0.8); saveState(); });
+            resetZoomPanBtn.addEventListener('click', resetView); 
+            bringToFrontBtn.addEventListener('click', () => changeZIndex(true));
+            sendToBackBtn.addEventListener('click', () => changeZIndex(false));
+            exportPngBtn.addEventListener('click', exportBoardAsPng);
+            clearCanvasBtn.addEventListener('click', () => {
+                confirmClearModal.style.display = MODAL_DISPLAY_BLOCK;
+            });
+            submitAnnotationBtn.addEventListener('click', handleSubmitAnnotation); 
+            cancelAnnotationBtn.addEventListener('click', closeAnnotationModal); 
+            closeExportModalBtn.addEventListener('click', () => {
+                exportPngModal.style.display = 'none';
+                exportedImage.src = '#'; 
+            });
+            helpBtn.addEventListener('click', openHelpModal); 
+            closeHelpModalBtn.addEventListener('click', closeHelpModal); 
+            confirmClearOkBtn.addEventListener('click', executeClearCanvas);
+            confirmClearCancelBtn.addEventListener('click', () => {
+                confirmClearModal.style.display = 'none';
+            });
+            addTextNodeBtn.addEventListener('click', openTextNodeModalForAdd);
+            submitTextNodeBtn.addEventListener('click', handleSubmitTextNode);
+            cancelTextNodeBtn.addEventListener('click', closeTextNodeModal);
+            canvas.addEventListener('mousedown', handleMouseDown);
+            canvas.addEventListener('mousemove', handleMouseMove);
+            canvas.addEventListener('mouseup', handleMouseUp);
+            canvas.addEventListener('mouseleave', handleMouseLeave);
+            canvas.addEventListener('wheel', handleWheelZoom, { passive: false });
+            canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('touchend', handleTouchEnd);
+            canvas.addEventListener('touchcancel', handleTouchEnd);
+            window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('resize', resizeCanvas); 
+            window.addEventListener('beforeunload', handleBeforeUnload); 
+
+            themeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                themeDropdown.style.display = themeDropdown.style.display === 'block' ? 'none' : 'block';
+            });
+            window.addEventListener('click', () => {
+                if (themeDropdown.style.display === 'block') {
+                    themeDropdown.style.display = 'none';
+                }
+            });
+
+            // Startup modal listeners
+            restoreSessionBtn.addEventListener('click', () => {
+                startupModal.style.display = 'none';
+                handleLoadSession(true); // true = silent auto-load
+            });
+            startFreshBtn.addEventListener('click', () => {
+                startupModal.style.display = 'none';
+                confirmDeleteSessionModal.style.display = MODAL_DISPLAY_BLOCK;
+            });
+            confirmDeleteSessionOkBtn.addEventListener('click', async () => {
+                confirmDeleteSessionModal.style.display = 'none';
+                try {
+                    await idbHelper.deleteSession();
+                    showMessage("Saved session cleared.");
+                } catch (error) {
+                    console.error("Could not delete session:", error);
+                    showMessage("Error clearing session.", 4000);
+                }
+                // Initialize a clean slate
+                initializeEmptyCanvas();
+            });
+             confirmDeleteSessionCancelBtn.addEventListener('click', () => {
+                confirmDeleteSessionModal.style.display = 'none';
+                // Re-show the initial choice modal
+                startupModal.style.display = MODAL_DISPLAY_BLOCK;
+            });
+
+            populateThemeSelector();
+            applyTheme(currentTheme, false);
+
+            history = [];
+            redoStack = [];
+            bgColorPicker.value = canvasBackgroundColor;
+            canvas.style.backgroundColor = canvasBackgroundColor;
+            
+            // Check for a saved session to decide whether to show the startup modal
+            idbHelper.loadSession().then(sessionData => {
+                if (sessionData) {
+                    startupModal.style.display = MODAL_DISPLAY_BLOCK;
+                } else {
+                    initializeEmptyCanvas();
+                }
+            }).catch(error => {
+                console.error("Could not check for session on startup:", error);
+                initializeEmptyCanvas(); // Fallback to starting fresh
+            });
+        }
+        
+        function initializeEmptyCanvas() {
+            if (history.length === 0) {
+                saveState();
+            }
+            resizeCanvas(); 
+            canvas.focus();
+        }
+
+        // --- Theme Management ---
+        function populateThemeSelector() {
+            themeDropdown.innerHTML = '';
+            Object.keys(THEMES).forEach(themeName => {
+                const option = document.createElement('button');
+                option.textContent = themeName;
+                option.className = 'theme-option';
+                option.dataset.themeName = themeName;
+                if (themeName === currentTheme) {
+                    option.classList.add('active');
+                }
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    applyTheme(themeName);
+                    themeDropdown.style.display = 'none';
+                });
+                themeDropdown.appendChild(option);
+            });
+        }
+
+        function applyTheme(themeName, updateHistory = true) {
+            const theme = THEMES[themeName];
+            if (!theme) {
+                console.error(`Theme "${themeName}" not found.`);
+                return;
+            }
+            Object.keys(theme).forEach(key => {
+                document.documentElement.style.setProperty(key, theme[key]);
+            });
+            currentTheme = themeName;
+
+            // Save chosen theme to localStorage
+            try {
+                localStorage.setItem('decor8MoodboardTheme', themeName);
+            } catch (e) {
+                console.error("Could not save theme to localStorage:", e);
+            }
+
+            // Update active class in dropdown
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.toggle('active', opt.dataset.themeName === themeName);
+            });
+            
+            // Only update history if it's a user action
+            if (updateHistory) {
+                saveState(true);
+            }
+        }
+
+        // --- Canvas & View ---
+        function resizeCanvas() {
+            if (canvas.clientWidth > 0 && canvas.clientHeight > 0) {
+                 canvas.width = canvas.clientWidth;
+                 canvas.height = canvas.clientHeight;
+            }
+            draw();
+        }
+
+        function zoomCanvas(factor, clientX, clientY, isPinch = false) {
+            const newScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale * factor));
+            if (Math.abs(newScale - scale) < EPSILON && !isPinch) return;
+            const SFPx = clientX === undefined ? canvas.width / 2 : clientX - canvas.offsetLeft;
+            const SFPy = clientY === undefined ? canvas.height / 2 : clientY - canvas.offsetTop;
+            const WFPx_before = (SFPx - translateX) / scale;
+            const WFPy_before = (SFPy - translateY) / scale;
+            scale = newScale;
+            translateX = SFPx - WFPx_before * scale;
+            translateY = SFPy - WFPy_before * scale;
+            draw();
+        }
+
+        function resetView() {
+            if (items.length === 0) {
+                // If the canvas is empty, the original behavior is fine.
+                scale = 1;
+                translateX = 0;
+                translateY = 0;
+                saveState();
+                draw();
+                return;
+            }
+
+            // --- Start of new logic: Find the bounding box of all items ---
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            items.forEach(item => {
+                minX = Math.min(minX, item.x);
+                minY = Math.min(minY, item.y);
+                maxX = Math.max(maxX, item.x + item.width);
+                maxY = Math.max(maxY, item.y + item.height);
+            });
+
+            const contentWidth = maxX - minX;
+            const contentHeight = maxY - minY;
+
+            if (contentWidth === 0 || contentHeight === 0) {
+                // Fallback for single item or zero-dimension content
+                scale = 1;
+                const contentCenterX = items[0].x + items[0].width / 2;
+                const contentCenterY = items[0].y + items[0].height / 2;
+                translateX = (canvas.clientWidth / 2) - (contentCenterX * scale);
+                translateY = (canvas.clientHeight / 2) - (contentCenterY * scale);
+            } else {
+                // --- Center the content and fit it to the screen ---
+                const padding = 50; // pixels of padding around the content
+                const canvasWidth = canvas.clientWidth;
+                const canvasHeight = canvas.clientHeight;
+
+                // Calculate the best scale to fit all content on the screen
+                const scaleX = (canvasWidth - padding * 2) / contentWidth;
+                const scaleY = (canvasHeight - padding * 2) / contentHeight;
+                
+                // Use the smaller scale to ensure everything fits, but don't zoom in too much
+                scale = Math.min(scaleX, scaleY, 1.2); 
+
+                // Now calculate the pan needed to center the content
+                const contentCenterX = minX + contentWidth / 2;
+                const contentCenterY = minY + contentHeight / 2;
+
+                translateX = (canvasWidth / 2) - (contentCenterX * scale);
+                translateY = (canvasHeight / 2) - (contentCenterY * scale);
+            }
+            
+            saveState();
+            draw();
+        }
+		
+		function centerContentView() {
+            if (items.length === 0) {
+                resetView();
+                return;
+            }
+
+            let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            items.forEach(item => {
+                minX = Math.min(minX, item.x);
+                minY = Math.min(minY, item.y);
+                maxX = Math.max(maxX, item.x + item.width);
+                maxY = Math.max(maxY, item.y + item.height);
+            });
+
+            const contentWidth = maxX - minX;
+            const contentHeight = maxY - minY;
+            
+            // If there's no real content, just reset the view.
+            if (contentWidth === 0 || contentHeight === 0) {
+                resetView();
+                return;
+            }
+
+            // Keep the loaded scale, but recalculate pan.
+            const contentCenterX = minX + contentWidth / 2;
+            const contentCenterY = minY + contentHeight / 2;
+
+            translateX = (canvas.clientWidth / 2) - (contentCenterX * scale);
+            translateY = (canvas.clientHeight / 2) - (contentCenterY * scale);
+
+            draw();
+            saveState(true); // Update history without creating a new undo state
+        }
+        
+        function getCanvasCoordinates(event, isTouchEvent = false) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = isTouchEvent ? event.clientX : event.clientX;
+            const clientY = isTouchEvent ? event.clientY : event.clientY;
+            return {
+                worldX: (clientX - rect.left - translateX) / scale,
+                worldY: (clientY - rect.top - translateY) / scale,
+                clientX: clientX,
+                clientY: clientY
+            };
+        }
+
+        // --- Drawing ---
+        function draw() {
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            ctx.translate(translateX, translateY);
+            ctx.scale(scale, scale);
+            items.sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0));
+            items.forEach(item => {
+                drawItem(item);
+                if (item.annotation && item.annotation.text) {
+                    drawAnnotation(item);
+                }
+            });
+            if (selectedItem) {
+                drawSelectionHighlight(selectedItem);
+            }
+            ctx.restore();
+        }
+
+        function drawItem(item) {
+            if (item.type === 'image' && item.img && item.img.complete) {
+                ctx.drawImage(item.img, item.x, item.y, item.width, item.height);
+                if (item.borderWidth && item.borderWidth > 0) { 
+                    ctx.strokeStyle = item.borderColor || '#000000'; 
+                    ctx.lineWidth = item.borderWidth; 
+                    ctx.strokeRect(item.x, item.y, item.width, item.height); 
+                }
+            } else if (item.type === 'textNode') { 
+                drawTextNode(item);
+            }
+        }
+
+        function drawTextNode(item) {
+            ctx.font = `${item.fontSize}px ${item.fontFamily || "'Inter', sans-serif"}`; 
+            const lines = wrapText(ctx, item.text, 0, 0, item.width - 10, item.fontSize, false); 
+            item.height = (lines.length * item.fontSize * 1.2) + 10;
+            ctx.fillStyle = item.backgroundColor || 'rgba(255,255,255,0.7)';
+            ctx.fillRect(item.x, item.y, item.width, item.height);
+            ctx.strokeStyle = '#cccccc';
+            ctx.lineWidth = 1; 
+            ctx.strokeRect(item.x, item.y, item.width, item.height);
+            ctx.fillStyle = item.color || '#000000';
+            ctx.textAlign = 'left'; 
+            ctx.textBaseline = 'top';
+            wrapText(ctx, item.text, item.x + 5, item.y + 5, item.width - 10, item.fontSize, true); 
+            ctx.textAlign = 'center';
+        }
+        
+        function drawAnnotation(item) {
+            ctx.font = `${item.annotation.fontSize}px ${item.annotation.fontFamily || "'Inter', sans-serif"}`; 
+            ctx.fillStyle = item.annotation.color || '#000000';
+            const textMargin = 5; 
+            const lineHeightFactor = 1.2; 
+            const currentLineHeight = item.annotation.fontSize * lineHeightFactor; 
+            let textDrawX, textDrawY; 
+            let currentTextAlign = 'center'; 
+            let currentWrapMaxWidth = item.width; 
+            const position = (item.type === 'image' && item.annotation.position) ? item.annotation.position : 'bottom';
+            const tempLinesForHeight = wrapText(ctx, item.annotation.text, 0, 0, item.width, item.annotation.fontSize, false);
+            const totalTextHeight = (tempLinesForHeight.length * currentLineHeight) - (tempLinesForHeight.length > 0 ? item.annotation.fontSize * (lineHeightFactor - 1) : 0) ; 
+            if (position === 'top') { 
+                currentTextAlign = 'center'; 
+                textDrawX = item.x + item.width / 2; 
+                textDrawY = item.y - textMargin - totalTextHeight;
+            } else if (position === 'left') { 
+                currentTextAlign = 'right'; 
+                currentWrapMaxWidth = Math.max(item.width / 1.5, 80); 
+                const sideLines = wrapText(ctx, item.annotation.text, 0, 0, currentWrapMaxWidth, item.annotation.fontSize, false); 
+                const sideTextHeight = (sideLines.length * currentLineHeight) - (sideLines.length > 0 ? item.annotation.fontSize * (lineHeightFactor - 1) : 0); 
+                textDrawX = item.x - textMargin; 
+                textDrawY = item.y + (item.height / 2) - (sideTextHeight / 2);
+            } else if (position === 'right') { 
+                currentTextAlign = 'left'; 
+                currentWrapMaxWidth = Math.max(item.width / 1.5, 80); 
+                const sideLines = wrapText(ctx, item.annotation.text, 0, 0, currentWrapMaxWidth, item.annotation.fontSize, false); 
+                const sideTextHeight = (sideLines.length * currentLineHeight) - (sideLines.length > 0 ? item.annotation.fontSize * (lineHeightFactor - 1) : 0); 
+                textDrawX = item.x + item.width + textMargin; 
+                textDrawY = item.y + (item.height / 2) - (sideTextHeight / 2);
+            } else {
+                currentTextAlign = 'center'; 
+                textDrawX = item.x + item.width / 2; 
+                textDrawY = item.y + item.height + textMargin; 
+            }
+            ctx.textAlign = currentTextAlign; 
+            ctx.textBaseline = 'top'; 
+            wrapText(ctx, item.annotation.text, textDrawX, textDrawY, currentWrapMaxWidth, item.annotation.fontSize, true);
+            ctx.textAlign = 'center';
+        }
+
+        function drawSelectionHighlight(item) {
+            ctx.strokeStyle = 'rgba(0, 123, 255, 0.7)'; 
+            ctx.lineWidth = 2; 
+            ctx.strokeRect(item.x, item.y, item.width, item.height);
+            const handleSize = RESIZE_HANDLE_SIZE;
+            ctx.fillStyle = 'rgba(0, 123, 255, 0.7)';
+            ctx.fillRect(item.x - handleSize / 2, item.y - handleSize / 2, handleSize, handleSize); 
+            ctx.fillRect(item.x + item.width - handleSize / 2, item.y - handleSize / 2, handleSize, handleSize); 
+            ctx.fillRect(item.x - handleSize / 2, item.y + item.height - handleSize / 2, handleSize, handleSize); 
+            ctx.fillRect(item.x + item.width - handleSize / 2, item.y + item.height - handleSize / 2, handleSize, handleSize); 
+        }
+        
+        function wrapText(context, text, x, y, maxWidth, fontSize, doDraw = true) {
+            if (!text) return [{text: '', x: x, y: y}];
+            const words = text.split(' ');
+            let lines = [];
+            let currentLine = '';
+            const actualLineHeight = fontSize * 1.2; 
+            for (let n = 0; n < words.length; n++) {
+                let testLine = currentLine + words[n] + ' ';
+                let metrics = context.measureText(testLine); 
+                let testWidth = metrics.width; 
+                if (testWidth > maxWidth && n > 0 && currentLine.length > 0) { 
+                    const lineToPush = currentLine.trim();
+                    if (doDraw) {
+                        context.fillText(lineToPush, x, y + lines.length * actualLineHeight); 
+                    }
+                    lines.push({ text: lineToPush, x: x, y: y + lines.length * actualLineHeight });
+                    currentLine = words[n] + ' ';
+                } else {
+                    currentLine = testLine;
+                }
+            }
+            const lastLineToPush = currentLine.trim();
+            if (doDraw) {
+                context.fillText(lastLineToPush, x, y + lines.length * actualLineHeight);
+            }
+            lines.push({ text: lastLineToPush, x: x, y: y + lines.length * actualLineHeight });
+            return lines;
+        }
+
+        // --- Event Handlers ---
+        function handleMouseDown(e) {
+            e.preventDefault();
+            if (isAnyModalOpen()) {
+                if (helpModal.style.display === MODAL_DISPLAY_FLEX) {
+                    const modalRect = helpModal.getBoundingClientRect();
+                    if (e.clientX < modalRect.left || e.clientX > modalRect.right || e.clientY < modalRect.top || e.clientY > modalRect.bottom) {
+                        closeHelpModal();
+                        return;
+                    }
+                }
+                return;
+            }
+            const { worldX, worldY, clientX, clientY } = getCanvasCoordinates(e); 
+            canvas.dataset.mouseDownWorldX = worldX;
+            canvas.dataset.mouseDownWorldY = worldY; 
+            if (selectedItem) { 
+                const corner = getResizeCorner(worldX, worldY, selectedItem);
+                if (corner) {
+                    isResizing = true;
+                    resizeCorner = corner;
+                    itemInitialDimensions = { 
+                        x: selectedItem.x, y: selectedItem.y, 
+                        width: selectedItem.width, height: selectedItem.height 
+                    };
+                    canvas.style.cursor = getResizeCursor(corner);
+                    return; 
+                }
+            }
+            const clickedItem = getItemAtPos(worldX, worldY);
+            selectedItem = clickedItem; 
+            if (clickedItem) { 
+                isDragging = true; 
+                dragStartCoords = { x: worldX - clickedItem.x, y: worldY - clickedItem.y }; 
+                canvas.style.cursor = 'grabbing'; 
+            } else {
+                isPanning = true; 
+                lastPanCoords = { x: clientX, y: clientY }; 
+                canvas.style.cursor = 'grabbing'; 
+            } 
+            updateButtonStates(); 
+            draw(); 
+        }
+        
+        function handleMouseMove(e) { 
+            e.preventDefault(); 
+            const { worldX, worldY, clientX, clientY } = getCanvasCoordinates(e); 
+            if (isResizing && selectedItem) { 
+                performItemResize(worldX, worldY, selectedItem, resizeCorner, itemInitialDimensions);
+            } else if (isDragging && selectedItem) { 
+                selectedItem.x = worldX - dragStartCoords.x; 
+                selectedItem.y = worldY - dragStartCoords.y; 
+            } else if (isPanning) { 
+                const dx = clientX - lastPanCoords.x; 
+                const dy = clientY - lastPanCoords.y; 
+                translateX += dx; 
+                translateY += dy; 
+                lastPanCoords = { x: clientX, y: clientY }; 
+            } else {
+                updateCursorStyle(worldX, worldY);
+            } 
+            draw(); 
+        }
+        
+        function handleMouseUp(e) { 
+            const { worldX, worldY } = getCanvasCoordinates(e); 
+            const initialMouseDownX = parseFloat(canvas.dataset.mouseDownWorldX); 
+            const initialMouseDownY = parseFloat(canvas.dataset.mouseDownWorldY); 
+            const hasMovedSignificantly = Math.abs(worldX - initialMouseDownX) * scale > 5 || Math.abs(worldY - initialMouseDownY) * scale > 5;
+            const currentItemUnderMouse = getItemAtPos(worldX, worldY); 
+            if (!hasMovedSignificantly && currentItemUnderMouse) { 
+                const currentTime = Date.now();
+                if (currentItemUnderMouse.id === lastTapItemId && (currentTime - lastTapTime) < DOUBLE_TAP_THRESHOLD) { 
+                    lastTapTime = 0;
+                    lastTapItemId = null;
+                } else { 
+                    lastTapTime = currentTime;
+                    lastTapItemId = currentItemUnderMouse.id;
+                    selectedItem = currentItemUnderMouse;
+                }
+            } else if (!hasMovedSignificantly && !currentItemUnderMouse) { 
+                 selectedItem = null;
+                 lastTapItemId = null; 
+            }
+            if (isDragging || isResizing || isPanning) { 
+                saveState(); 
+            } 
+            isDragging = false; 
+            isResizing = false; 
+            isPanning = false; 
+            resizeCorner = null; 
+            canvas.style.cursor = selectedItem ? 'grab' : 'default';
+            updateButtonStates(); 
+            draw(); 
+        }
+
+        function handleMouseLeave(e) { 
+            if (isDragging || isResizing || isPanning) { 
+                handleMouseUp(e); 
+            } 
+            canvas.style.cursor = 'default'; 
+        }
+        
+        function handleWheelZoom(e) { 
+            e.preventDefault(); 
+            const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+            zoomCanvas(zoomFactor, e.clientX, e.clientY); 
+            saveState();
+        }
+        
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            if (!touch) return;
+            if (isAnyModalOpen()) {
+                if (helpModal.style.display === MODAL_DISPLAY_FLEX) {
+                    const modalRect = helpModal.getBoundingClientRect();
+                    if (touch.clientX < modalRect.left || touch.clientX > modalRect.right || touch.clientY < modalRect.top || touch.clientY > modalRect.bottom) {
+                        closeHelpModal();
+                    }
+                }
+                return;
+            }
+            const { worldX, worldY, clientX, clientY } = getCanvasCoordinates(touch, true); 
+            touchStartCoords = { x: worldX, y: worldY };
+            if (e.touches.length === 1 && selectedItem ) {
+                const corner = getResizeCorner(worldX, worldY, selectedItem);
+                if (corner) {
+                    isResizing = true;
+                    resizeCorner = corner;
+                    itemInitialDimensions = { 
+                        x: selectedItem.x, y: selectedItem.y, 
+                        width: selectedItem.width, height: selectedItem.height 
+                    };
+                    return; 
+                }
+            }
+            const tappedItem = getItemAtPos(worldX, worldY); 
+            selectedItem = tappedItem; 
+            if (e.touches.length === 1) { 
+                if(tappedItem) {
+                    isDragging = true; 
+                    dragStartCoords = { x: worldX - tappedItem.x, y: worldY - tappedItem.y }; 
+                } else { 
+                    isPanning = true; 
+                    lastPanCoords = { x: clientX, y: clientY }; 
+                }
+            } else if (e.touches.length === 2) { 
+                isPanning = false; isDragging = false; isResizing = false;
+                const touch1 = e.touches[0]; 
+                const touch2 = e.touches[1]; 
+                initialPinchDistance = getDistance( 
+                    { x: touch1.clientX, y: touch1.clientY }, 
+                    { x: touch2.clientX, y: touch2.clientY } 
+                ); 
+            } 
+            updateButtonStates(); 
+            draw();
+        }
+
+        function handleTouchMove(e) { 
+            e.preventDefault(); 
+            if (e.touches.length === 1 && !initialPinchDistance) {
+                const touch = e.touches[0]; 
+                const { worldX, worldY, clientX, clientY } = getCanvasCoordinates(touch, true); 
+                if (isResizing && selectedItem) {
+                    performItemResize(worldX, worldY, selectedItem, resizeCorner, itemInitialDimensions);
+                } else if (isDragging && selectedItem) { 
+                    selectedItem.x = worldX - dragStartCoords.x; 
+                    selectedItem.y = worldY - dragStartCoords.y; 
+                } else if (isPanning) { 
+                    const dx = clientX - lastPanCoords.x; 
+                    const dy = clientY - lastPanCoords.y; 
+                    translateX += dx; 
+                    translateY += dy; 
+                    lastPanCoords = { x: clientX, y: clientY }; 
+                } 
+                draw(); 
+            } else if (e.touches.length === 2) {
+                const touch1 = e.touches[0]; 
+                const touch2 = e.touches[1]; 
+                const currentPinchDistance = getDistance( 
+                    { x: touch1.clientX, y: touch1.clientY }, 
+                    { x: touch2.clientX, y: touch2.clientY } 
+                ); 
+                if (initialPinchDistance) { 
+                    const zoomFactor = currentPinchDistance / initialPinchDistance; 
+                    const midX = (touch1.clientX + touch2.clientX) / 2; 
+                    const midY = (touch1.clientY + touch2.clientY) / 2; 
+                    zoomCanvas(zoomFactor, midX, midY, true);
+                    initialPinchDistance = currentPinchDistance;
+                } 
+            } 
+        }
+        
+        function handleTouchEnd(e) { 
+            const touch = e.changedTouches[0];
+            if (!touch) return;
+            const { worldX, worldY } = getCanvasCoordinates(touch, true);
+            const initialTouchDownX = touchStartCoords.x;
+            const initialTouchDownY = touchStartCoords.y;
+            const hasMovedSignificantly = Math.abs(worldX - initialTouchDownX) * scale > 10 || Math.abs(worldY - initialTouchDownY) * scale > 10;
+            const tappedItem = getItemAtPos(worldX, worldY);
+            if (!hasMovedSignificantly && tappedItem) {
+                const currentTime = Date.now();
+                if (tappedItem.id === lastTapItemId && (currentTime - lastTapTime) < DOUBLE_TAP_THRESHOLD) {
+                    lastTapTime = 0; 
+                    lastTapItemId = null;
+                } else {
+                    lastTapTime = currentTime;
+                    lastTapItemId = tappedItem.id;
+                    selectedItem = tappedItem;
+                }
+            } else if (!hasMovedSignificantly && !tappedItem) {
+                selectedItem = null;
+                lastTapItemId = null;
+            }
+            if (isDragging || isResizing || isPanning || initialPinchDistance) { 
+                saveState(); 
+            } 
+            isDragging = false; 
+            isResizing = false; 
+            isPanning = false; 
+            resizeCorner = null; 
+            initialPinchDistance = null;
+            updateButtonStates(); 
+            draw(); 
+        }
+
+        function performItemResize(currentWorldX, currentWorldY, item, corner, initialDims) {
+            let newX = initialDims.x;
+            let newY = initialDims.y;
+            let newWidth = initialDims.width;
+            let newHeight = initialDims.height;
+            const maintainAspectRatio = item.type === 'image';
+            const aspectRatio = (maintainAspectRatio && item.originalWidth && item.originalHeight) ?
+                                item.originalWidth / item.originalHeight : 1;
+            switch (corner) {
+                case 'br':
+                    newWidth = currentWorldX - initialDims.x;
+                    newHeight = maintainAspectRatio ? newWidth / aspectRatio : currentWorldY - initialDims.y;
+                    break;
+                case 'bl':
+                    newWidth = (initialDims.x + initialDims.width) - currentWorldX;
+                    newX = currentWorldX;
+                    newHeight = maintainAspectRatio ? newWidth / aspectRatio : currentWorldY - initialDims.y;
+                    break;
+                case 'tr':
+                    newWidth = currentWorldX - initialDims.x;
+                    newHeight = maintainAspectRatio ? newWidth / aspectRatio : (initialDims.y + initialDims.height) - currentWorldY;
+                    newY = maintainAspectRatio ? (initialDims.y + initialDims.height) - newHeight : currentWorldY;
+                    break;
+                case 'tl':
+                    newWidth = (initialDims.x + initialDims.width) - currentWorldX;
+                    newX = currentWorldX;
+                    newHeight = maintainAspectRatio ? newWidth / aspectRatio : (initialDims.y + initialDims.height) - currentWorldY;
+                    newY = maintainAspectRatio ? (initialDims.y + initialDims.height) - newHeight : currentWorldY;
+                    break;
+            }
+            item.width = Math.max(newWidth, MIN_ITEM_SIZE);
+            item.height = Math.max(newHeight, maintainAspectRatio ? item.width / aspectRatio : MIN_ITEM_SIZE);
+            if (maintainAspectRatio) {
+                if (newWidth < MIN_ITEM_SIZE && newWidth === item.width) {
+                    item.height = Math.max(item.width / aspectRatio, MIN_ITEM_SIZE / aspectRatio);
+                } else if (newHeight < MIN_ITEM_SIZE && newHeight === item.height) {
+                     item.width = Math.max(item.height * aspectRatio, MIN_ITEM_SIZE * aspectRatio);
+                }
+            }
+            if (corner.includes('l')) {
+                item.x = (initialDims.x + initialDims.width) - item.width;
+            } else {
+                item.x = newX;
+            }
+            if (corner.includes('t')) {
+                item.y = (initialDims.y + initialDims.height) - item.height;
+            } else {
+                item.y = newY;
+            }
+        }
+        
+        function updateCursorStyle(worldX, worldY) {
+            if (selectedItem) { 
+                const corner = getResizeCorner(worldX, worldY, selectedItem); 
+                canvas.style.cursor = corner ? getResizeCursor(corner) : (getItemAtPos(worldX, worldY) ? 'grab' : 'default'); 
+            } else { 
+                canvas.style.cursor = getItemAtPos(worldX, worldY) ? 'grab' : 'default'; 
+            } 
+        }
+        
+        // --- Item Management ---
+        function triggerUpload(acceptType) {
+            uploadInput.accept = acceptType;
+            uploadInput.click();
+        }
+
+        function handleFileUpload(e) {
+            const files = e.target.files;
+            if (!files || files.length === 0) {
+                e.target.value = null;
+                return;
+            }
+            showLoading(true);
+            let filesToProcess = Array.from(files).length;
+            let loadedCount = 0;
+            Array.from(files).forEach(file => {
+                if (file.size > MAX_FILE_SIZE) {
+                    showMessage(`File "${file.name}" exceeds ${MAX_FILE_SIZE / (1024*1024)} MB limit.`, 4000);
+                    filesToProcess--;
+                    if (filesToProcess === 0) {
+                        finalizeUpload(loadedCount, files.length);
+                    }
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const fileType = file.type.split('/')[0];
+                    const dataUrl = event.target.result;
+                    if (fileType === 'image') {
+                        const img = new Image();
+                        img.onload = () => {
+                            const aspectRatio = img.width / img.height;
+                            const newItem = {
+                                type: 'image',
+                                src: dataUrl,
+                                x: (canvas.width / 2 - DEFAULT_IMAGE_WIDTH / 2 - translateX) / scale, 
+                                y: (canvas.height / 2 - (DEFAULT_IMAGE_WIDTH/aspectRatio) / 2 - translateY) / scale,
+                                zIndex: items.length,
+                                id: generateUniqueId('item'),
+                                annotation: null,
+                                createdAt: new Date().toISOString(),
+                                img: img,
+                                width: DEFAULT_IMAGE_WIDTH,
+                                height: DEFAULT_IMAGE_WIDTH / aspectRatio,
+                                originalWidth: img.width,
+                                originalHeight: img.height,
+                                borderColor: '#000000',
+                                borderWidth: 0,
+                            };
+                            items.push(newItem);
+                            selectedItem = newItem;
+                            loadedCount++;
+                            filesToProcess--;
+                            if (filesToProcess === 0) finalizeUpload(loadedCount, files.length);
+                        };
+                        img.onerror = () => {
+                            console.error("Error loading image:", file.name);
+                            showMessage(`Error loading image: ${file.name}`);
+                            filesToProcess--;
+                            if (filesToProcess === 0) finalizeUpload(loadedCount, files.length);
+                        };
+                        img.src = dataUrl;
+                    } else {
+                        console.warn("Unsupported file type:", file.name, file.type);
+                        filesToProcess--;
+                         if (filesToProcess === 0) finalizeUpload(loadedCount, files.length);
+                    }
+                };
+                reader.onerror = () => {
+                    console.error("Error reading file:", file.name);
+                    showMessage(`Error reading file: ${file.name}`);
+                     filesToProcess--;
+                     if (filesToProcess === 0) finalizeUpload(loadedCount, files.length);
+                };
+                reader.readAsDataURL(file);
+            });
+            e.target.value = null;
+        }
+
+        function finalizeUpload(loadedCount, totalFilesAttempted) {
+            saveState();
+            updateButtonStates();
+            draw();
+            showLoading(false);
+            if (loadedCount > 0) {
+                showMessage(`${loadedCount} file(s) loaded.`);
+            }
+            if (loadedCount < totalFilesAttempted) {
+                showMessage(`Some files could not be processed. ${loadedCount} of ${totalFilesAttempted} loaded successfully.`, 5000);
+            }
+        }
+        
+        function deleteSelectedItem() { 
+            if (!selectedItem) return; 
+            const itemIdToDelete = selectedItem.id; 
+            items = items.filter(item => item.id !== itemIdToDelete); 
+            selectedItem = null; 
+            saveState(); 
+            updateButtonStates(); 
+            draw(); 
+            showMessage("Item deleted."); 
+        }
+        
+        function changeZIndex(bringToFront) { 
+            if (!selectedItem) return; 
+            let minZ = Infinity, maxZ = -Infinity;
+            if (items.length > 0) {
+                items.forEach(item => { 
+                    const z = item.zIndex || 0; 
+                    if (z < minZ) minZ = z; 
+                    if (z > maxZ) maxZ = z; 
+                });
+            } else {
+                minZ = 0; maxZ = 0;
+            }
+            if (bringToFront) { 
+                selectedItem.zIndex = maxZ + 1; 
+            } else { 
+                selectedItem.zIndex = minZ - 1; 
+            } 
+            items.sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0)); 
+            items.forEach((item, index) => { item.zIndex = index; }); 
+            saveState(); 
+            draw(); 
+        }
+
+        // --- Image Cropping ---
+		function openCropModal() {
+			if (!selectedItem || selectedItem.type !== 'image') return;
+			croppingItem = selectedItem;
+			isCroppingMode = true;
+
+			cropModal.style.display = MODAL_DISPLAY_BLOCK;
+
+			const cropCtx = cropCanvas.getContext('2d');
+			const img = croppingItem.img;
+
+			if (!img || !img.complete || img.naturalWidth === 0) {
+				console.error("Image to crop is not ready or invalid.", img);
+				showMessage("Cannot crop: Image data is not available.", 3000);
+				closeCropModal();
+				return;
+			}
+
+			const wrapperW = cropCanvasWrapper.clientWidth;
+			const wrapperH = cropCanvasWrapper.clientHeight;
+			const imgAspectRatio = img.naturalWidth / img.naturalHeight;
+
+			let canvasW, canvasH;
+			if ((wrapperW / wrapperH) > imgAspectRatio) {
+				canvasH = wrapperH;
+				canvasW = wrapperH * imgAspectRatio;
+			} else {
+				canvasW = wrapperW;
+				canvasH = wrapperW / imgAspectRatio;
+			}
+
+			cropCanvas.width = canvasW;
+			cropCanvas.height = canvasH;
+			cropCanvas.style.left = `${(wrapperW - canvasW) / 2}px`;
+			cropCanvas.style.top = `${(wrapperH - canvasH) / 2}px`;
+			
+			cropCanvasScale = canvasW / img.naturalWidth;
+
+			cropCtx.drawImage(img, 0, 0, canvasW, canvasH);
+		}
+
+        function closeCropModal() {
+            isCroppingMode = false;
+            croppingItem = null;
+            isDrawingCropRect = false;
+            cropRect = { startX: 0, startY: 0, w: 0, h: 0 };
+            cropModal.style.display = 'none';
+            const cropCtx = cropCanvas.getContext('2d');
+            cropCtx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
+        }
+
+        function handleCropMouseDown(e) {
+            if (!isCroppingMode) return;
+            isDrawingCropRect = true;
+            const rect = cropCanvas.getBoundingClientRect();
+            cropRect.startX = e.clientX - rect.left;
+            cropRect.startY = e.clientY - rect.top;
+            cropRect.w = 0;
+            cropRect.h = 0;
+        }
+
+        function handleCropMouseMove(e) {
+            if (!isDrawingCropRect) return;
+            const rect = cropCanvas.getBoundingClientRect();
+            const currentX = e.clientX - rect.left;
+            const currentY = e.clientY - rect.top;
+
+            cropRect.w = currentX - cropRect.startX;
+            cropRect.h = currentY - cropRect.startY;
+
+            const cropCtx = cropCanvas.getContext('2d');
+            cropCtx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
+            cropCtx.drawImage(croppingItem.img, 0, 0, cropCanvas.width, cropCanvas.height);
+
+            cropCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            cropCtx.lineWidth = 2;
+            cropCtx.setLineDash([5, 3]);
+            cropCtx.strokeRect(cropRect.startX, cropRect.startY, cropRect.w, cropRect.h);
+            cropCtx.setLineDash([]);
+        }
+
+        function handleCropMouseUp(e) {
+            isDrawingCropRect = false;
+        }
+		function handleCropTouchStart(e) {
+			e.preventDefault();
+			isDrawingCropRect = true;
+			const rect = cropCanvas.getBoundingClientRect();
+			const touch = e.touches[0];
+			cropRect.startX = touch.clientX - rect.left;
+			cropRect.startY = touch.clientY - rect.top;
+			cropRect.w = 0;
+			cropRect.h = 0;
+		}
+
+		function handleCropTouchMove(e) {
+			e.preventDefault();
+			if (!isDrawingCropRect) return;
+			
+			const rect = cropCanvas.getBoundingClientRect();
+			const touch = e.touches[0];
+			const currentX = touch.clientX - rect.left;
+			const currentY = touch.clientY - rect.top;
+
+			cropRect.w = currentX - cropRect.startX;
+			cropRect.h = currentY - cropRect.startY;
+
+			const cropCtx = cropCanvas.getContext('2d');
+			cropCtx.clearRect(0, 0, cropCanvas.width, cropCanvas.height);
+			cropCtx.drawImage(croppingItem.img, 0, 0, cropCanvas.width, cropCanvas.height);
+
+			cropCtx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+			cropCtx.lineWidth = 2;
+			cropCtx.setLineDash([5, 3]);
+			cropCtx.strokeRect(cropRect.startX, cropRect.startY, cropRect.w, cropRect.h);
+			cropCtx.setLineDash([]);
+		}
+
+		function handleCropTouchEnd(e) {
+			isDrawingCropRect = false;
+		}
+		
+		async function handleCropConfirm() {
+            if (!croppingItem || Math.abs(cropRect.w) < 1 || Math.abs(cropRect.h) < 1) {
+                showMessage("No valid crop area selected.", 2000);
+                return;
+            }
+            showLoading(true);
+            const finalCropRect = {
+                x: cropRect.w > 0 ? cropRect.startX : cropRect.startX + cropRect.w,
+                y: cropRect.h > 0 ? cropRect.startY : cropRect.startY + cropRect.h,
+                width: Math.abs(cropRect.w),
+                height: Math.abs(cropRect.h)
+            };
+            const sourceX = finalCropRect.x / cropCanvasScale;
+            const sourceY = finalCropRect.y / cropCanvasScale;
+            const sourceWidth = finalCropRect.width / cropCanvasScale;
+            const sourceHeight = finalCropRect.height / cropCanvasScale;
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = sourceWidth;
+            tempCanvas.height = sourceHeight;
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCtx.drawImage(
+                croppingItem.img,
+                sourceX, sourceY, sourceWidth, sourceHeight,
+                0, 0, sourceWidth, sourceHeight
+            );
+            const newDataUrl = tempCanvas.toDataURL();
+            try {
+                const newImg = await loadImagePromise(newDataUrl);
+                const oldArea = croppingItem.width * croppingItem.height;
+                const newAspectRatio = sourceWidth / sourceHeight;
+                const newCanvasHeight = Math.sqrt(oldArea / newAspectRatio);
+                const newCanvasWidth = oldArea / newCanvasHeight;
+                const oldCanvasWidth = croppingItem.width;
+                const oldCanvasHeight = croppingItem.height;
+                croppingItem.img = newImg;
+                croppingItem.src = newDataUrl;
+                croppingItem.originalWidth = sourceWidth;
+                croppingItem.originalHeight = sourceHeight;
+                croppingItem.width = newCanvasWidth;
+                croppingItem.height = newCanvasHeight;
+                croppingItem.x = croppingItem.x + (oldCanvasWidth - newCanvasWidth) / 2;
+                croppingItem.y = croppingItem.y + (oldCanvasHeight - newCanvasHeight) / 2;
+                saveState();
+                draw();
+                showMessage("Image cropped successfully.");
+            } catch (error) {
+                console.error("Failed to load cropped image:", error);
+                showMessage("An error occurred while applying the crop.", 4000);
+            } finally {
+                showLoading(false);
+                closeCropModal();
+            }
+        }
+
+        // --- Annotation & Styling ---
+        function openAnnotationModal() { 
+            if (!selectedItem) return;
+            if (selectedItem.type === 'textNode') {
+                openTextNodeModalForEdit(selectedItem);
+                return;
+            }
+            annotationModalTitle.textContent = 'Annotate / Style Item';
+            submitAnnotationBtn.textContent = "Apply Changes";
+            const annotation = selectedItem.annotation || {};
+            annotationText.value = annotation.text || '';
+            annotationColorInput.value = annotation.color || '#000000';
+            annotationFontSizeInput.value = annotation.fontSize || 12;
+            annotationFontFamilyInput.value = annotation.fontFamily || "'Inter', sans-serif"; 
+            if (selectedItem.type === 'image') {
+                imageSpecificControls.style.display = 'block';
+                annotationPositionInput.value = annotation.position || 'bottom';
+                imageBorderColorInput.value = selectedItem.borderColor || '#000000';
+                imageBorderWidthInput.value = selectedItem.borderWidth || 0;
+            } else {
+                imageSpecificControls.style.display = 'none';
+            }
+            annotationModal.style.display = MODAL_DISPLAY_BLOCK;
+            annotationText.focus();
+        }
+
+        function closeAnnotationModal() { 
+            annotationModal.style.display = 'none'; 
+        }
+
+        function handleSubmitAnnotation() { 
+            if (!selectedItem || selectedItem.type === 'textNode') return; 
+            const text = annotationText.value.trim(); 
+            const color = annotationColorInput.value; 
+            const fontSize = parseInt(annotationFontSizeInput.value, 10); 
+            const fontFamily = annotationFontFamilyInput.value; 
+            let message = "";
+            if (selectedItem.type === 'image') {
+                const position = annotationPositionInput.value; 
+                selectedItem.borderColor = imageBorderColorInput.value; 
+                selectedItem.borderWidth = parseInt(imageBorderWidthInput.value, 10) || 0; 
+                if (!text && selectedItem.annotation) {
+                    selectedItem.annotation = null; 
+                    message = "Annotation removed. Image style updated."; 
+                } else if (text && fontSize > 0) {
+                    const wasAnnotationNull = !selectedItem.annotation; 
+                    selectedItem.annotation = { text, color, fontSize, fontFamily, position }; 
+                    message = wasAnnotationNull ? "Annotation added. Image style updated." : "Annotation and style updated."; 
+                } else {
+                    message = "Image style updated.";
+                }
+            }
+            if (message) showMessage(message);
+            closeAnnotationModal(); 
+            saveState(); 
+            draw(); 
+            updateButtonStates(); 
+        }
+
+        // --- Text Node Modal ---
+        function openTextNodeModalForAdd() {
+            editingTextNode = null;
+            textNodeModalTitle.textContent = "Add Text Snippet";
+            submitTextNodeBtn.textContent = "Add Snippet";
+            textNodeContent.value = '';
+            textNodeColorInput.value = '#000000';
+            textNodeFontSizeInput.value = 16;
+            textNodeFontFamilyInput.value = "'Inter', sans-serif"; 
+            textNodeBgColorInput.value = '#FFFFFF'; 
+            textNodeDefaultWidthInput.value = DEFAULT_TEXT_NODE_WIDTH;
+            textNodeDefaultWidthInput.disabled = false;
+            textNodeModal.style.display = MODAL_DISPLAY_BLOCK;
+            textNodeContent.focus();
+        }
+
+        function openTextNodeModalForEdit(textNode) {
+            editingTextNode = textNode;
+            textNodeModalTitle.textContent = "Edit Text Snippet";
+            submitTextNodeBtn.textContent = "Update Snippet";
+            textNodeContent.value = textNode.text;
+            textNodeColorInput.value = textNode.color || '#000000';
+            textNodeFontSizeInput.value = textNode.fontSize || 16;
+            textNodeFontFamilyInput.value = textNode.fontFamily || "'Inter', sans-serif"; 
+            textNodeBgColorInput.value = textNode.backgroundColor || '#FFFFFF';
+            textNodeDefaultWidthInput.value = textNode.width;
+            textNodeDefaultWidthInput.disabled = true;
+            textNodeModal.style.display = MODAL_DISPLAY_BLOCK;
+            textNodeContent.focus();
+        }
+
+        function closeTextNodeModal() {
+            textNodeModal.style.display = 'none';
+            editingTextNode = null;
+        }
+
+        function handleSubmitTextNode() {
+            const text = textNodeContent.value.trim();
+            const color = textNodeColorInput.value;
+            const fontSize = parseInt(textNodeFontSizeInput.value, 10);
+            const fontFamily = textNodeFontFamilyInput.value; 
+            const bgColor = textNodeBgColorInput.value;
+            const defaultWidth = parseInt(textNodeDefaultWidthInput.value, 10);
+            if (!text || fontSize <= 0 || defaultWidth <= 0) {
+                showMessage("Please enter text, and ensure font size & width are positive.");
+                return;
+            }
+            if (editingTextNode) {
+                editingTextNode.text = text;
+                editingTextNode.color = color;
+                editingTextNode.fontSize = fontSize;
+                editingTextNode.fontFamily = fontFamily; 
+                editingTextNode.backgroundColor = bgColor;
+                showMessage("Text snippet updated.");
+            } else {
+                const tempCtx = document.createElement('canvas').getContext('2d');
+                tempCtx.font = `${fontSize}px ${fontFamily}`; 
+                const lines = wrapText(tempCtx, text, 0, 0, defaultWidth - 10, fontSize, false);
+                const initialHeight = (lines.length * fontSize * 1.2) + 10;
+                const newItem = {
+                    type: 'textNode',
+                    id: generateUniqueId('text'),
+                    text: text,
+                    x: (canvas.width / 2 - defaultWidth / 2 - translateX) / scale,
+                    y: (canvas.height / 2 - initialHeight / 2 - translateY) / scale,
+                    width: defaultWidth,
+                    height: initialHeight, 
+                    fontSize: fontSize,
+                    fontFamily: fontFamily, 
+                    color: color,
+                    backgroundColor: bgColor,
+                    zIndex: items.length,
+                    createdAt: new Date().toISOString()
+                };
+                items.push(newItem);
+                selectedItem = newItem;
+                showMessage("Text snippet added.");
+            }
+            closeTextNodeModal();
+            saveState();
+            draw();
+            updateButtonStates();
+        }
+
+        // --- UI Updates & State ---
+        function updateButtonStates() {
+            const isItemSelected = !!selectedItem;
+            const isImageSelected = selectedItem && selectedItem.type === 'image';
+            const isTextNodeSelected = selectedItem && selectedItem.type === 'textNode';
+            styleOrAnnotateBtn.disabled = !isItemSelected;
+            styleOrAnnotateBtn.classList.toggle('disabled', styleOrAnnotateBtn.disabled);
+            cropImageBtn.classList.toggle('disabled', !isImageSelected);
+            cropImageBtn.disabled = !isImageSelected;
+            if (isTextNodeSelected) {
+                styleOrAnnotateBtn.title = "Edit Text Snippet (A)";
+            } else {
+               styleOrAnnotateBtn.title = "Annotate / Style Item (A)";
+            }
+            deleteItemBtn.disabled = !isItemSelected;
+            deleteItemBtn.classList.toggle('disabled', deleteItemBtn.disabled);
+            bringToFrontBtn.disabled = !isItemSelected; 
+            bringToFrontBtn.classList.toggle('disabled', bringToFrontBtn.disabled);
+            sendToBackBtn.disabled = !isItemSelected; 
+            sendToBackBtn.classList.toggle('disabled', sendToBackBtn.disabled);
+        }
+
+        function saveState(isMinorUpdate = false) {
+            const state = {
+                items: JSON.parse(JSON.stringify(items.map(item => { 
+                    if (item.type === 'image' && item.img) { 
+                        const { img, ...rest } = item;
+                        return { ...rest, src: item.src };
+                    }
+                    return { ...item }; 
+                }))),
+                scale: scale, 
+                translateX: translateX, 
+                translateY: translateY,
+                canvasBackgroundColor: canvasBackgroundColor, 
+                currentTheme: currentTheme
+            };
+
+            if (isMinorUpdate && history.length > 0) {
+                 // Overwrite the last state for UI-only changes like theming
+                 history[history.length - 1] = state;
+            } else {
+                // For actual canvas changes, push a new state
+                if (history.length > 0) redoStack = []; // Clear redo stack on new action
+                if (history.length >= MAX_HISTORY_STATES) { 
+                    history.shift();
+                }
+                history.push(state); 
+            }
+            updateUndoRedoButtons();
+        }
+
+		async function loadState(stateOrBoardData) {
+            showLoading(true);
+            if (stateOrBoardData.transform && typeof stateOrBoardData.scale === 'undefined') { 
+                scale = stateOrBoardData.transform.scale || 1; 
+                translateX = stateOrBoardData.transform.translateX || 0; 
+                translateY = stateOrBoardData.transform.translateY || 0;
+            } else { 
+                scale = stateOrBoardData.scale || 1; 
+                translateX = stateOrBoardData.translateX || 0; 
+                translateY = stateOrBoardData.translateY || 0;
+            }
+            canvasBackgroundColor = stateOrBoardData.canvasBackgroundColor || '#ffffff'; 
+            bgColorPicker.value = canvasBackgroundColor; 
+            canvas.style.backgroundColor = canvasBackgroundColor;
+            
+            const themeToApply = stateOrBoardData.currentTheme || 'decor8 Signature';
+            applyTheme(themeToApply, false);
+
+            const newItems = [];
+            if (stateOrBoardData.items) { 
+                for (const itemData of stateOrBoardData.items) { 
+                    try {
+                        let loadedItem = { ...itemData };
+                        if (itemData.type === 'image' && itemData.src) { 
+                            const img = await loadImagePromise(itemData.src);
+                            loadedItem.img = img;
+                            loadedItem.borderColor = itemData.borderColor || '#000000';
+                            loadedItem.borderWidth = typeof itemData.borderWidth === 'number' ? itemData.borderWidth : 0;
+                        } else if (itemData.type === 'textNode') { 
+                            loadedItem.fontSize = itemData.fontSize || 16;
+                            loadedItem.fontFamily = itemData.fontFamily || "'Inter', sans-serif"; 
+                            loadedItem.color = itemData.color || '#000000';
+                            loadedItem.backgroundColor = itemData.backgroundColor || 'rgba(255,255,255,0.7)';
+                            loadedItem.width = itemData.width || DEFAULT_TEXT_NODE_WIDTH;
+                        }
+                        if (itemData.annotation) {
+                            loadedItem.annotation = {
+                                ...itemData.annotation,
+                                fontFamily: itemData.annotation.fontFamily || "'Inter', sans-serif",
+                                position: (itemData.type === 'image' && itemData.annotation.position) ? itemData.annotation.position : 'bottom'
+                            };
+                        } else {
+                            loadedItem.annotation = null;
+                        }
+                        loadedItem.createdAt = itemData.createdAt || new Date().toISOString();
+                        newItems.push(loadedItem);
+                    } catch (error) { 
+                        console.error("Error processing item during state load:", itemData, error); 
+                        showMessage("Error loading an item during restoration."); 
+                    }
+                }
+            }
+            items = newItems; 
+            selectedItem = null;
+            showLoading(false); 
+            draw(); 
+            updateUndoRedoButtons(); 
+            updateButtonStates();   
+        }
+
+        function undo() { 
+            if (history.length > 1) {
+                const currentState = history.pop(); 
+                redoStack.push(currentState); 
+                const prevState = history[history.length - 1]; 
+                loadState(JSON.parse(JSON.stringify(prevState)));
+            } 
+        }
+        function redo() { 
+            if (redoStack.length > 0) { 
+                const nextState = redoStack.pop(); 
+                history.push(nextState); 
+                loadState(JSON.parse(JSON.stringify(nextState)));
+            } 
+        }
+        function updateUndoRedoButtons() { 
+            undoBtn.classList.toggle('disabled', history.length <= 1); 
+            undoBtn.disabled = history.length <= 1; 
+            redoBtn.classList.toggle('disabled', redoStack.length === 0); 
+            redoBtn.disabled = redoStack.length === 0; 
+        }
+
+        // --- General Helpers ---
+        function generateUniqueId(prefix = 'id') {
+            return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        }
+        
+        function getItemAtPos(worldX, worldY) { 
+            for (let i = items.length - 1; i >= 0; i--) { 
+                const item = items[i]; 
+                if (worldX >= item.x && worldX <= item.x + item.width && 
+                    worldY >= item.y && worldY <= item.y + item.height) { 
+                    return item; 
+                } 
+            } 
+            return null; 
+        }
+
+        function getResizeCorner(worldX, worldY, item) { 
+            const handleRadius = RESIZE_HANDLE_SIZE / scale;
+            if (Math.abs(worldX - item.x) < handleRadius && Math.abs(worldY - item.y) < handleRadius) return 'tl'; 
+            if (Math.abs(worldX - (item.x + item.width)) < handleRadius && Math.abs(worldY - item.y) < handleRadius) return 'tr'; 
+            if (Math.abs(worldX - item.x) < handleRadius && Math.abs(worldY - (item.y + item.height)) < handleRadius) return 'bl'; 
+            if (Math.abs(worldX - (item.x + item.width)) < handleRadius && Math.abs(worldY - (item.y + item.height)) < handleRadius) return 'br'; 
+            return null; 
+        }
+        
+        function getResizeCursor(corner) { 
+            switch (corner) { 
+                case 'tl': case 'br': return 'nwse-resize'; 
+                case 'tr': case 'bl': return 'nesw-resize'; 
+                default: return 'default'; 
+            } 
+        }
+        
+        function getDistance(p1, p2) { 
+            return Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2)); 
+        }
+
+        function showLoading(show) { 
+            loadingSpinner.style.display = show ? 'block' : 'none'; 
+        }
+        
+        function showMessage(message, duration = 3000) { 
+            messageBox.textContent = message; 
+            messageBox.classList.add('show'); 
+            setTimeout(() => { messageBox.classList.remove('show'); }, duration); 
+        }
+
+        function isAnyModalOpen() {
+            const modals = [
+                annotationModal, textNodeModal, exportPngModal, helpModal,
+                confirmClearModal, cropModal, startupModal, confirmDeleteSessionModal
+            ];
+            return modals.some(modal => modal && (modal.style.display === MODAL_DISPLAY_BLOCK || modal.style.display === MODAL_DISPLAY_FLEX));
+        }
+
+        // --- File & Board Operations ---
+        function handleBgColorChange(e) {
+            canvasBackgroundColor = e.target.value;
+            canvas.style.backgroundColor = canvasBackgroundColor;
+            saveState();
+            draw();
+        }
+        
+        // --- Session Management ---
+        async function handleSaveSession() {
+            const boardData = {
+                items: items.map(item => {
+                    let savedItem = { ...item };
+                    if (item.type === 'image' && item.img) {
+                        const { img, ...rest } = item;
+                        savedItem = { ...rest, src: item.src };
+                    }
+                    return savedItem;
+                }),
+                scale: scale, translateX: translateX, translateY: translateY,
+                canvasBackgroundColor: canvasBackgroundColor,
+                currentTheme: currentTheme,
+                version: "decor8-1.0"
+            };
+            try {
+                await idbHelper.saveSession(boardData);
+                showMessage("Session saved in browser.");
+            } catch (error) {
+                console.error("Error saving session:", error);
+                showMessage("Could not save session. Browser might be in private mode or storage is full.", 5000);
+            }
+        }
+
+        async function handleLoadSession(isAutoLoad = false) {
+            try {
+                const sessionData = await idbHelper.loadSession();
+                if (sessionData) {
+                    await loadState(sessionData);
+					centerContentView();
+                    history = [];
+                    redoStack = [];
+                    const currentLoadedStateForHistory = {
+                        items: JSON.parse(JSON.stringify(items.map(item => {
+                            let itemCopy = { ...item };
+                            if (item.type === 'image' && item.img) {
+                                const { img, ...rest } = itemCopy;
+                                itemCopy = rest; itemCopy.src = item.img.src;
+                            }
+                            return itemCopy;
+                        }))),
+                        scale: scale, translateX: translateX, translateY: translateY,
+                        canvasBackgroundColor: canvasBackgroundColor,
+                        currentTheme: currentTheme
+                    };
+                    history.push(currentLoadedStateForHistory);
+                    updateUndoRedoButtons();
+                    if (!isAutoLoad) {
+                        showMessage("Session loaded from browser.");
+                    }
+                    initializeEmptyCanvas(); // This just focuses and resizes canvas
+                } else if (!isAutoLoad) {
+                    showMessage("No saved session found in this browser.");
+                }
+            } catch (error) {
+                console.error("Error loading session:", error);
+                if (!isAutoLoad) {
+                    showMessage("Could not load session from browser.", 4000);
+                }
+            }
+        }
+
+        function saveBoardAsJson() { 
+            const boardData = { 
+                items: items.map(item => { 
+                    let savedItem = { ...item };
+                    if (item.type === 'image' && item.img) { 
+                        const { img, ...rest } = item;
+                        savedItem = { ...rest, src: item.src };
+                    }
+                    return savedItem; 
+                }), 
+                transform: { scale: scale, translateX: translateX, translateY: translateY }, 
+                canvasBackgroundColor: canvasBackgroundColor, 
+                currentTheme: currentTheme,
+                version: "decor8-1.0"
+            }; 
+            const jsonString = JSON.stringify(boardData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' }); 
+            const url = URL.createObjectURL(blob); 
+            const a = document.createElement('a'); 
+            a.href = url; 
+            a.download = `decor8_moodboard_${Date.now()}.json`;
+            document.body.appendChild(a); 
+            a.click(); 
+            document.body.removeChild(a); 
+            URL.revokeObjectURL(url); 
+            showMessage("Mood board saved as JSON."); 
+        }
+        
+        async function loadBoardFromJson(e) { 
+            const file = e.target.files[0]; 
+            if (!file) return; 
+            showLoading(true); 
+            const reader = new FileReader(); 
+            reader.onload = async (event) => { 
+                try { 
+                    const boardData = JSON.parse(event.target.result); 
+                    if (!boardData.items || (!boardData.transform && typeof boardData.scale === 'undefined')) {
+                        throw new Error("Invalid JSON format for a mood board file."); 
+                    } 
+                    await loadState(boardData);
+					centerContentView();
+                    history = []; 
+                    redoStack = []; 
+                    const currentLoadedStateForHistory = { 
+                        items: JSON.parse(JSON.stringify(items.map(item => { 
+                            let itemCopy = { ...item }; 
+                            if (item.type === 'image' && item.img) { 
+                                const { img, ...rest } = itemCopy; 
+                                itemCopy = rest; itemCopy.src = item.img.src; 
+                            } 
+                            return itemCopy; 
+                        }))), 
+                        scale: scale, translateX: translateX, translateY: translateY, 
+                        canvasBackgroundColor: canvasBackgroundColor, 
+                        currentTheme: currentTheme
+                    }; 
+                    history.push(currentLoadedStateForHistory); 
+                    updateUndoRedoButtons(); 
+                    showMessage("Mood board loaded successfully."); 
+                } catch (error) { 
+                    console.error("Error loading JSON:", error); 
+                    showMessage(`Failed to load board: ${error.message}`); 
+                } finally { 
+                    showLoading(false); 
+                    e.target.value = null;
+                } 
+            }; 
+            reader.readAsText(file); 
+        }
+        
+        function loadImagePromise(src) { 
+            return new Promise((resolve, reject) => { 
+                const img = new Image(); 
+                img.crossOrigin = "Anonymous";
+                img.onload = () => resolve(img); 
+                img.onerror = (err) => { 
+                    console.error("loadImagePromise failed for src:", src, err); 
+                    reject(new Error(`Failed to load image: ${src.substring(0, 50)}...`)); 
+                }; 
+                img.src = src; 
+            }); 
+        }
+        
+        function exportBoardAsPng() { 
+            showLoading(true); 
+            try { 
+                const exportCanvas = document.createElement('canvas'); 
+                const exportCtx = exportCanvas.getContext('2d'); 
+                let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity; 
+                if (items.length === 0) { 
+                    exportCanvas.width = canvas.width / scale; 
+                    exportCanvas.height = canvas.height / scale;
+                    minX = 0; minY = 0;
+                } else { 
+                    items.forEach(item => { 
+                        let itemMinX = item.x; 
+                        let itemMinY = item.y; 
+                        let itemMaxX = item.x + item.width; 
+                        let itemMaxY = item.y + item.height; 
+                        if (item.type === 'image' && item.borderWidth && item.borderWidth > 0) { 
+                            itemMinX -= item.borderWidth; itemMinY -= item.borderWidth; 
+                            itemMaxX += item.borderWidth; itemMaxY += item.borderWidth; 
+                        }
+                        if (item.annotation && item.annotation.text) { 
+                            exportCtx.font = `${item.annotation.fontSize}px ${item.annotation.fontFamily || "'Inter', sans-serif"}`;  
+                            const textMargin = 5; 
+                            const lineHeightFactor = 1.2; 
+                            const currentLineHeight = item.annotation.fontSize * lineHeightFactor; 
+                            let currentWrapMaxWidth = item.width; 
+                            const position = (item.type === 'image' && item.annotation.position) ? item.annotation.position : 'bottom';
+                            if (position === 'left' || position === 'right') { 
+                                currentWrapMaxWidth = Math.max(item.width / 1.5, 80); 
+                            } 
+                            const tempLines = wrapText(exportCtx, item.annotation.text, 0, 0, currentWrapMaxWidth, item.annotation.fontSize, false); 
+                            const tempTotalTextHeight = (tempLines.length * currentLineHeight) - (tempLines.length > 0 ? item.annotation.fontSize * (lineHeightFactor-1) : 0); 
+                            const textWidth = tempLines.reduce((max, line) => Math.max(max, exportCtx.measureText(line.text).width), 0); 
+                            if (position === 'top') { itemMinY = Math.min(itemMinY, item.y - textMargin - tempTotalTextHeight); } 
+                            else if (position === 'bottom') { itemMaxY = Math.max(itemMaxY, item.y + item.height + textMargin + tempTotalTextHeight); } 
+                            else if (position === 'left') { itemMinX = Math.min(itemMinX, item.x - textMargin - textWidth); } 
+                            else if (position === 'right') { itemMaxX = Math.max(itemMaxX, item.x + item.width + textMargin + textWidth); } 
+                        }
+                        minX = Math.min(minX, itemMinX); 
+                        minY = Math.min(minY, itemMinY); 
+                        maxX = Math.max(maxX, itemMaxX); 
+                        maxY = Math.max(maxY, itemMaxY); 
+                    }); 
+                    if (minX === Infinity) { minX = 0; minY = 0; maxX = canvas.width / scale; maxY = canvas.height/scale; } 
+                } 
+                const padding = 50; 
+                exportCanvas.width = (maxX - minX) + 2 * padding; 
+                exportCanvas.height = (maxY - minY) + 2 * padding;
+                exportCtx.fillStyle = canvasBackgroundColor; 
+                exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height); 
+                if (items.length > 0) { 
+                    exportCtx.translate(-minX + padding, -minY + padding); 
+                } 
+                const sortedItems = [...items].sort((a, b) => (a.zIndex || 0) - (b.zIndex || 0)); 
+                sortedItems.forEach(item => {
+                    if (item.type === 'image' && item.img && item.img.complete) { 
+                        try { 
+                            exportCtx.drawImage(item.img, item.x, item.y, item.width, item.height); 
+                        } catch (e) { 
+                            console.error("Error drawing image to export canvas (CORS taint?):", item.src, e); 
+                            exportCtx.fillStyle = 'red';
+                            exportCtx.fillRect(item.x, item.y, item.width, item.height);
+                            exportCtx.fillStyle = 'white'; exportCtx.fillText("ERR", item.x + 10, item.y + 20);
+                        }
+                        if (item.borderWidth && item.borderWidth > 0) { 
+                            exportCtx.strokeStyle = item.borderColor || '#000000'; 
+                            exportCtx.lineWidth = item.borderWidth; 
+                            exportCtx.strokeRect(item.x, item.y, item.width, item.height); 
+                        } 
+                    } else if (item.type === 'image' && item.img && !item.img.complete) { 
+                        console.warn("Skipping non-complete image during export:", item.src); 
+                    } else if (item.type === 'textNode') { 
+                        exportCtx.font = `${item.fontSize}px ${item.fontFamily || "'Inter', sans-serif"}`; 
+                        exportCtx.fillStyle = item.backgroundColor || 'rgba(255,255,255,0.7)';
+                        exportCtx.fillRect(item.x, item.y, item.width, item.height);
+                        exportCtx.strokeStyle = '#cccccc'; exportCtx.lineWidth = 1;
+                        exportCtx.strokeRect(item.x, item.y, item.width, item.height);
+                        exportCtx.fillStyle = item.color || '#000000';
+                        exportCtx.textAlign = 'left'; exportCtx.textBaseline = 'top';
+                        wrapText(exportCtx, item.text, item.x + 5, item.y + 5, item.width - 10, item.fontSize, true);
+                    }
+                    if (item.annotation && item.annotation.text) { 
+                        exportCtx.font = `${item.annotation.fontSize}px ${item.annotation.fontFamily || "'Inter', sans-serif"}`; 
+                        exportCtx.fillStyle = item.annotation.color || '#000000';
+                        const textMargin = 5; 
+                        const lineHeightFactor = 1.2; 
+                        const currentLineHeight = item.annotation.fontSize * lineHeightFactor; 
+                        let textDrawX, textDrawY; 
+                        let currentTextAlign = 'center'; 
+                        let currentWrapMaxWidth = item.width; 
+                        const position = (item.type === 'image' && item.annotation.position) ? item.annotation.position : 'bottom';
+                        const tempLinesForHeight = wrapText(exportCtx, item.annotation.text, 0, 0, item.width, item.annotation.fontSize, false);
+                        const totalTextHeight = (tempLinesForHeight.length * currentLineHeight) - (tempLinesForHeight.length > 0 ? item.annotation.fontSize * (lineHeightFactor - 1) : 0) ; 
+                        if (position === 'top') { 
+                            currentTextAlign = 'center'; 
+                            textDrawX = item.x + item.width / 2; 
+                            textDrawY = item.y - textMargin - totalTextHeight;
+                        } else if (position === 'left') { 
+                            currentTextAlign = 'right'; 
+                            currentWrapMaxWidth = Math.max(item.width / 1.5, 80); 
+                            const sideLines = wrapText(exportCtx, item.annotation.text, 0, 0, currentWrapMaxWidth, item.annotation.fontSize, false); 
+                            const sideTextHeight = (sideLines.length * currentLineHeight) - (sideLines.length > 0 ? item.annotation.fontSize * (lineHeightFactor - 1) : 0); 
+                            textDrawX = item.x - textMargin; 
+                            textDrawY = item.y + (item.height / 2) - (sideTextHeight / 2);
+                        } else if (position === 'right') { 
+                            currentTextAlign = 'left'; 
+                            currentWrapMaxWidth = Math.max(item.width / 1.5, 80); 
+                            const sideLines = wrapText(exportCtx, item.annotation.text, 0, 0, currentWrapMaxWidth, item.annotation.fontSize, false); 
+                            const sideTextHeight = (sideLines.length * currentLineHeight) - (sideLines.length > 0 ? item.annotation.fontSize * (lineHeightFactor - 1) : 0); 
+                            textDrawX = item.x + item.width + textMargin; 
+                            textDrawY = item.y + (item.height / 2) - (sideTextHeight / 2);
+                        } else {
+                            currentTextAlign = 'center'; 
+                            textDrawX = item.x + item.width / 2; 
+                            textDrawY = item.y + item.height + textMargin; 
+                        }
+                        exportCtx.textAlign = currentTextAlign; 
+                        exportCtx.textBaseline = 'top'; 
+                        wrapText(exportCtx, item.annotation.text, textDrawX, textDrawY, currentWrapMaxWidth, item.annotation.fontSize, true);
+                    } 
+                }); 
+                try {
+                    const dataUrl = exportCanvas.toDataURL('image/png'); 
+                    if (dataUrl === "data:,") { 
+                        showMessage("Export failed: Could not generate image.", 7000); 
+                        showLoading(false); return; 
+                    } 
+                    exportedImage.src = dataUrl; 
+                    exportPngModal.style.display = MODAL_DISPLAY_BLOCK; 
+                } catch (e) { 
+                    console.error("Error calling toDataURL:", e);
+                    showMessage("Export failed: Canvas may be tainted by external images.", 7000);
+                } finally {
+                    showLoading(false); 
+                }
+            } catch (error) { 
+                console.error("Error in exportBoardAsPng:", error); 
+                showMessage("Failed to export board as PNG. Check console for details.", 5000); 
+                showLoading(false); 
+            } 
+        }
+        
+        // --- Modal & UI Interaction ---
+        function executeClearCanvas() {
+            confirmClearModal.style.display = 'none'; 
+            items = [];
+            selectedItem = null;
+            saveState();
+            draw();
+            updateButtonStates();
+            showMessage("Canvas cleared.");
+        }
+
+        function openHelpModal() { 
+            populateHelpContent(); 
+            helpModal.style.display = MODAL_DISPLAY_FLEX; 
+        }
+        function closeHelpModal() { 
+            helpModal.style.display = 'none'; 
+        }
+        function populateHelpContent() {
+            helpContent.innerHTML = `
+                <p class="mb-2"><strong>decor8 Mood Board:</strong> A simple, intuitive space to gather inspiration, explore ideas, and create beautiful mood boards for your creative projects.</p>
+                
+                <h4 class="text-lg font-semibold mt-3 mb-1">Saving & Loading Your Work</h4>
+                <p class="mb-2">There are two ways to save your work. The app will ask on startup if you want to restore a local session.</p>
+                <ul class="list-disc list-inside mb-2 space-y-1">
+                    <li><strong>Save/Load Session:</strong> (<svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> / <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"></path></svg>) Saves your work to the browser's local storage. This is great for quick saves. <strong>Note:</strong> This session is stored only on this device and in this browser. Clearing your browser data will delete it.</li>
+                    <li><strong>Save/Load File:</strong> (<svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> / <svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>) Saves/loads your work as a <code>.json</code> file on your computer. Use this for permanent backups or to move your work between different devices or browsers.</li>
+                </ul>
+
+                <h4 class="text-lg font-semibold mt-3 mb-1">How to Use This App:</h4>
+                <ul class="list-disc list-inside mb-2 space-y-1">
+                    <li><strong>Add Content:</strong> Use the toolbar buttons or keyboard shortcuts to add your images and text snippets.</li>
+                    <li><strong>Interact:</strong> Single-click/tap to select an item. Drag to move it. Resize items using the corner handles.</li>
+                    <li><strong>Style & Annotate:</strong> Select an item and click the annotate icon to add text and change styles like borders.</li>
+                    <li><strong>Crop:</strong> Select an image and click the crop icon to focus on the perfect detail.</li>
+                    <li><strong>Export:</strong> When your board is complete, export it as a high-quality PNG image using the export button.</li>
+                </ul>
+
+                <div class="mt-4 pt-3 border-t">
+                    <h4 class="text-lg font-semibold mt-1 mb-2">Keyboard Shortcuts</h4>
+                    <ul class="list-disc list-inside mb-2 space-y-1">
+                        <li><strong class="w-28 inline-block">I</strong> Add Image</li>
+                        <li><strong class="w-28 inline-block">T</strong> Add Text Snippet</li>
+                        <li><strong class="w-28 inline-block">A</strong> Annotate/Style Selected Item</li>
+                        <li><strong class="w-28 inline-block">Arrow Keys</strong> Nudge Selected Item</li>
+                        <li><strong class="w-28 inline-block">Delete/Backspace</strong> Delete Selected Item</li>
+                        <li><strong class="w-28 inline-block">Ctrl/Cmd + Z</strong> Undo</li>
+                        <li><strong class="w-28 inline-block">Ctrl/Cmd + Y</strong> Redo</li>
+                        <li><strong class="w-28 inline-block">Ctrl/Cmd + S</strong> Save to Device File</li>
+                        <li><strong class="w-28 inline-block">Ctrl/Cmd + O</strong> Load from Device File</li>
+                        <li><strong class="w-28 inline-block">+/-</strong> Zoom In/Out</li>
+                        <li><strong class="w-28 inline-block">0</strong> Reset View</li>
+                        <li><strong class="w-28 inline-block">Esc</strong> Close modals or deselect item</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        // --- Keyboard Shortcuts & Window Events ---
+        function handleKeyDown(e) { 
+            const activeElement = document.activeElement; 
+            const isInputFocused = activeElement && 
+                                 (activeElement.tagName === 'INPUT' || 
+                                  activeElement.tagName === 'TEXTAREA' || 
+                                  activeElement.isContentEditable || 
+                                  activeElement.tagName === 'SELECT'); 
+            if (e.key === 'Escape') {
+                if (cropModal.style.display === MODAL_DISPLAY_BLOCK) { closeCropModal(); e.preventDefault(); return; }
+                if (annotationModal.style.display === MODAL_DISPLAY_BLOCK) { closeAnnotationModal(); e.preventDefault(); return; }
+                if (textNodeModal.style.display === MODAL_DISPLAY_BLOCK) { closeTextNodeModal(); e.preventDefault(); return; }
+                if (exportPngModal.style.display === MODAL_DISPLAY_BLOCK) { closeExportModalBtn.click(); e.preventDefault(); return; }
+                if (helpModal.style.display === MODAL_DISPLAY_FLEX) { closeHelpModal(); e.preventDefault(); return; }
+                if (confirmClearModal.style.display === MODAL_DISPLAY_BLOCK) { confirmClearModal.style.display = 'none'; e.preventDefault(); return; }
+            }
+            if (isInputFocused) {
+                if (e.key === 'Escape') {
+                    activeElement.blur();
+                } else if (!((e.ctrlKey || e.metaKey) && ['z', 'y', 's', 'o'].includes(e.key.toLowerCase()))) {
+                    return;
+                }
+            }
+            let actionPerformed = false; 
+            const key = e.key.toLowerCase(); 
+            if ((key === 'delete' || key === 'backspace') && selectedItem) { 
+                deleteSelectedItem(); actionPerformed = true; 
+            } else if ((e.ctrlKey || e.metaKey) && key === 'z') { 
+                undo(); actionPerformed = true; 
+            } else if ((e.ctrlKey || e.metaKey) && (key === 'y' || (e.shiftKey && key === 'z'))) {
+                redo(); actionPerformed = true; 
+            } else if ((e.ctrlKey || e.metaKey) && key === 's') { 
+                saveBoardAsJson(); actionPerformed = true; 
+            } else if ((e.ctrlKey || e.metaKey) && key === 'o') { 
+                loadFromDeviceBtn.click(); actionPerformed = true; 
+            } else if (key === 'i') {
+                addImageBtn.click(); actionPerformed = true;
+            } else if (key === 't') {
+                addTextNodeBtn.click(); actionPerformed = true;
+            } else if (key === 'a' && selectedItem) {
+                openAnnotationModal(); actionPerformed = true;
+            } else if (key.startsWith('arrow') && selectedItem) {
+                let dx = 0, dy = 0;
+                if (key === 'arrowleft') dx = -NUDGE_AMOUNT;
+                if (key === 'arrowright') dx = NUDGE_AMOUNT;
+                if (key === 'arrowup') dy = -NUDGE_AMOUNT;
+                if (key === 'arrowdown') dy = NUDGE_AMOUNT;
+                selectedItem.x += dx;
+                selectedItem.y += dy;
+                saveState();
+                draw();
+                actionPerformed = true;
+            } else if (key === '+' || key === '=') { 
+                zoomCanvas(1.2); saveState(); actionPerformed = true; 
+            } else if (key === '-') {
+                zoomCanvas(0.8); saveState(); actionPerformed = true; 
+            } else if (key === '0') {
+                resetView(); actionPerformed = true; 
+            } else if (key === 'escape') {
+                if (selectedItem) { 
+                    selectedItem = null; 
+                    draw(); updateButtonStates(); actionPerformed = true; 
+                } 
+            } 
+            if (actionPerformed) { 
+                e.preventDefault(); 
+            } 
+        }
+
+        function handleBeforeUnload(e) { 
+            if (history.length > 1) { 
+                e.preventDefault(); 
+                e.returnValue = ''; 
+                return '';
+            } 
+        }
+
+        // --- Start the app ---
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
