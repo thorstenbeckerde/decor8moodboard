@@ -10,10 +10,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        html { font-family: 'Inter', sans-serif; }
+        html { font-family: var(--ui-font); }
         
         :root {
             /* General Theme Variables */
+			--ui-font: 'Inter', sans-serif;
             --page-bg: #f8f8f8;
             --header-text-color: #333333;
             --separator-color: #e0e0e0;
@@ -29,7 +30,7 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--ui-font);
             margin: 0;
             display: flex;
             flex-direction: column;
@@ -449,92 +450,103 @@
         const MODAL_DISPLAY_BLOCK = 'block';
 
         // --- Themes ---
-        const THEMES = {
-            'decor8 Signature': {
-                '--page-bg': '#f8f8f8',
-                '--header-text-color': '#333333',
-                '--separator-color': '#e0e0e0',
-                '--controls-bg': '#ffffff',
-                '--button-bg': 'transparent',
-                '--button-text-color': '#555555',
-                '--button-border-color': 'transparent',
-                '--button-hover-bg': '#f0f0f0',
-                '--button-hover-border-color': '#f0f0f0',
-                '--button-active-bg': '#EADADB',
-                '--button-active-text': '#333333',
-                '--button-active-border': '#DDC4C4',
-            },
-            'Warm Neutral': {
-                '--page-bg': '#F5F1ED',
-                '--header-text-color': '#5C544D',
-                '--separator-color': '#E5DED6',
-                '--controls-bg': '#FFFFFF',
-                '--button-bg': 'transparent',
-                '--button-text-color': '#5C544D',
-                '--button-border-color': 'transparent',
-                '--button-hover-bg': '#EFEAE4',
-                '--button-hover-border-color': '#EFEAE4',
-                '--button-active-bg': '#BCA89F',
-                '--button-active-text': '#FFFFFF',
-                '--button-active-border': '#AD968D',
-            },
-            'Chic & Modern': {
-                '--page-bg': '#EAEAEA',
-                '--header-text-color': '#111111',
-                '--separator-color': '#D0D0D0',
-                '--controls-bg': '#FAFAFA',
-                '--button-bg': 'transparent',
-                '--button-text-color': '#111111',
-                '--button-border-color': 'transparent',
-                '--button-hover-bg': '#E0E0E0',
-                '--button-hover-border-color': '#E0E0E0',
-                '--button-active-bg': '#A9C4D4',
-                '--button-active-text': '#111111',
-                '--button-active-border': '#9AB5C5',
-            },
-            'Blush & Sage': {
-                '--page-bg': '#FDF6F6',
-                '--header-text-color': '#5A6E65',
-                '--separator-color': '#E8DCD8',
-                '--controls-bg': '#FFFFFF',
-                '--button-bg': 'transparent',
-                '--button-text-color': '#5A6E65',
-                '--button-border-color': 'transparent',
-                '--button-hover-bg': '#F1E9E9',
-                '--button-hover-border-color': '#F1E9E9',
-                '--button-active-bg': '#A9C4B8',
-                '--button-active-text': '#FFFFFF',
-                '--button-active-border': '#9AB5A8',
-            },
-            'Scandinavian Blue': {
-                '--page-bg': '#F4F7F9',
-                '--header-text-color': '#3D5A80',
-                '--separator-color': '#DDE3E8',
-                '--controls-bg': '#FFFFFF',
-                '--button-bg': 'transparent',
-                '--button-text-color': '#3D5A80',
-                '--button-border-color': 'transparent',
-                '--button-hover-bg': '#E9EFF3',
-                '--button-hover-border-color': '#E9EFF3',
-                '--button-active-bg': '#98C1D9',
-                '--button-active-text': '#293241',
-                '--button-active-border': '#87B2CC',
-            },
-            'Earthy Terracotta': {
-                '--page-bg': '#FCF9F5',
-                '--header-text-color': '#BF5A36',
-                '--separator-color': '#EAE1D7',
-                '--controls-bg': '#FFFFFF',
-                '--button-bg': 'transparent',
-                '--button-text-color': '#BF5A36',
-                '--button-border-color': 'transparent',
-                '--button-hover-bg': '#F6ECE2',
-                '--button-hover-border-color': '#F6ECE2',
-                '--button-active-bg': '#D98C6B',
-                '--button-active-text': '#FFFFFF',
-                '--button-active-border': '#C97B5A',
-            },
-        };
+		const THEMES = {
+		  'decor8 Signature': {
+			'--ui-font': "'Inter', sans-serif",
+			'--page-bg': '#F8F8F8',
+			'--header-text-color': '#333333',
+			'--separator-color': '#E0E0E0',
+			'--controls-bg': '#FFFFFF',
+			'--button-bg': 'transparent',
+			'--button-text-color': '#555555',
+			'--button-border-color': 'transparent',
+			'--button-hover-bg': '#F1F3F5',
+			'--button-hover-border-color': '#F1F3F5',
+			'--button-active-bg': '#EADADB',
+			'--button-active-text': '#333333',
+			'--button-active-border': '#DDC4C4',
+		  },
+
+		  'Powder Sky': { // airy blue
+			'--ui-font': "'Playfair Display', serif",
+			'--page-bg': '#F1F5FF',
+			'--header-text-color': '#2B3360',
+			'--separator-color': '#D9E1FF',
+			'--controls-bg': '#E4F3EC',
+			'--button-bg': 'transparent',
+			'--button-text-color': '#2B3360',
+			'--button-border-color': 'transparent',
+			'--button-hover-bg': '#E6EDFF',
+			'--button-hover-border-color': '#E6EDFF',
+			'--button-active-bg': '#C9D6FF',
+			'--button-active-text': '#1E274D',
+			'--button-active-border': '#AEBEFF',
+		  },
+
+		  'Mint Studio': { // soft green
+			'--ui-font': "'Lora', serif",
+			'--page-bg': '#ECF7F2',
+			'--header-text-color': '#214B41',
+			'--separator-color': '#CEEAE0',
+			'--controls-bg': '#E4F3EC',
+			'--button-bg': 'transparent',
+			'--button-text-color': '#214B41',
+			'--button-border-color': 'transparent',
+			'--button-hover-bg': '#DFF1EA',
+			'--button-hover-border-color': '#DFF1EA',
+			'--button-active-bg': '#B9E0D3',
+			'--button-active-text': '#17362F',
+			'--button-active-border': '#9AD0C0',
+		  },
+
+		  'Blush Linen': { // rose/beige
+			'--ui-font': "'Montserrat', sans-serif",
+			'--page-bg': '#FFF6F8',
+			'--header-text-color': '#5E2F3D',
+			'--separator-color': '#F2D9E1',
+			'--controls-bg': '#FCEFF3',
+			'--button-bg': 'transparent',
+			'--button-text-color': '#5E2F3D',
+			'--button-border-color': 'transparent',
+			'--button-hover-bg': '#FBE8EE',
+			'--button-hover-border-color': '#FBE8EE',
+			'--button-active-bg': '#EFC1CD',
+			'--button-active-text': '#4A2230',
+			'--button-active-border': '#E1A6B6',
+		  },
+
+		  'Sand & Ink': { // warm neutral + crisp text
+			'--ui-font': "'Inter', sans-serif",
+			'--page-bg': '#F7F3EE',
+			'--header-text-color': '#1F2937',
+			'--separator-color': '#E8E1D9',
+			'--controls-bg': '#F0EAE2',
+			'--button-bg': 'transparent',
+			'--button-text-color': '#1F2937',
+			'--button-border-color': 'transparent',
+			'--button-hover-bg': '#EEE7DE',
+			'--button-hover-border-color': '#EEE7DE',
+			'--button-active-bg': '#D7C8B7',
+			'--button-active-text': '#1C2532',
+			'--button-active-border': '#C9B7A3',
+		  },
+
+		  'Nordic Mist': { // slate-light
+			'--ui-font': "'Lora', serif",
+			'--page-bg': '#F4F6F8',
+			'--header-text-color': '#2E3A46',
+			'--separator-color': '#DEE5EB',
+			'--controls-bg': '#EDF1F4',
+			'--button-bg': 'transparent',
+			'--button-text-color': '#2E3A46',
+			'--button-border-color': 'transparent',
+			'--button-hover-bg': '#E9EFF3',
+			'--button-hover-border-color': '#E9EFF3',
+			'--button-active-bg': '#C7D6E2',
+			'--button-active-text': '#22303B',
+			'--button-active-border': '#AEC5D4',
+		  }
+		};
 
         // --- Canvas Setup ---
         const canvas = document.getElementById('moodboardCanvas');
